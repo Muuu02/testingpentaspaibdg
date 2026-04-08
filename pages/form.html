@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Pendaftaran - PENTAS PAI KOTA BANDUNG 2026</title>
+    <meta name="description" content="Formulir pendaftaran PENTAS PAI Kota Bandung 2026">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- QRCode.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'amiri': ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5', 100: '#d1fae5', 200: '#a7f3d0', 300: '#6ee7b7',
+                            400: '#34d399', 500: '#10b981', 600: '#059669', 700: '#047857',
+                            800: '#065f46', 900: '#064e3b', 950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * { scroll-behavior: smooth; }
+        body { font-family: 'Inter', sans-serif; }
+        .gradient-emerald { background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%); }
+        .btn-primary { background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); transition: all 0.3s ease; }
+        .btn-primary:hover:not(:disabled) { transform: scale(1.02); box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4); }
+        .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+        
+        .step-indicator { transition: all 0.3s ease; }
+        .step-indicator.active { background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; transform: scale(1.1); }
+        .step-indicator.completed { background: #065f46; color: white; }
+        .step-line { transition: all 0.3s ease; }
+        .step-line.completed { background: #065f46; }
+        
+        .form-step { display: none; animation: fadeIn 0.5s ease; }
+        .form-step.active { display: block; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .input-field { transition: all 0.3s ease; }
+        .input-field:focus { border-color: #065f46; box-shadow: 0 0 0 3px rgba(6, 95, 70, 0.1); }
+        .input-field.error { border-color: #ef4444; }
+        
+        .lomba-option { transition: all 0.3s ease; cursor: pointer; }
+        .lomba-option:hover { border-color: #065f46; }
+        .lomba-option.selected { border-color: #065f46; background: #ecfdf5; }
+        
+        .touch-target { min-height: 44px; min-width: 44px; }
+        
+        .progress-bar { transition: width 0.5s ease; }
+        
+        .anggota-card { transition: all 0.3s ease; }
+        .anggota-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        
+        ::placeholder { color: #6b7280; opacity: 1; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen font-inter">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 bg-white/95 backdrop-blur-md shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <a href="../index.html" class="flex items-center space-x-3">
+                    <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-full flex items-center justify-center">
+                        <i class="fas fa-mosque text-amber-400 text-lg md:text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-emerald-800">PENTAS PAI</h1>
+                        <p class="text-xs text-gray-600">KOTA BANDUNG 2026</p>
+                    </div>
+                </a>
+                <a href="../index.html" class="text-gray-700 hover:text-emerald-700 font-medium transition touch-target flex items-center">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="pt-20 md:pt-28 pb-12 px-4">
+        <div class="max-w-4xl mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-6 md:mb-8">
+                <h1 class="text-2xl md:text-4xl font-bold text-gray-900 mb-2">
+                    Formulir <span class="text-emerald-700">Pendaftaran</span>
+                </h1>
+                <p class="text-gray-600 text-sm md:text-base">Lengkapi data dengan benar dan tepat</p>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-4 md:mb-6">
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-sm font-medium text-gray-600">Progress Pendaftaran</span>
+                    <span class="text-sm font-bold text-emerald-700" id="progressText">Step 1 dari 4</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 md:h-3">
+                    <div class="progress-bar bg-gradient-to-r from-emerald-600 to-amber-500 h-2.5 md:h-3 rounded-full" id="progressBar" style="width: 25%"></div>
+                </div>
+            </div>
+            
+            <!-- Step Indicator -->
+            <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-4 md:mb-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex flex-col items-center">
+                        <div class="step-indicator active w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-lg border-2 border-amber-500" data-step="1">1</div>
+                        <span class="text-xs mt-1 md:mt-2 font-medium text-emerald-700">Pilih Lomba</span>
+                    </div>
+                    <div class="step-line flex-1 h-1 bg-gray-200 mx-1 md:mx-2" data-line="1"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="step-indicator w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-lg border-2 border-gray-300 text-gray-400" data-step="2">2</div>
+                        <span class="text-xs mt-1 md:mt-2 font-medium text-gray-400">Data Sekolah</span>
+                    </div>
+                    <div class="step-line flex-1 h-1 bg-gray-200 mx-1 md:mx-2" data-line="2"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="step-indicator w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-lg border-2 border-gray-300 text-gray-400" data-step="3">3</div>
+                        <span class="text-xs mt-1 md:mt-2 font-medium text-gray-400">Data Peserta</span>
+                    </div>
+                    <div class="step-line flex-1 h-1 bg-gray-200 mx-1 md:mx-2" data-line="3"></div>
+                    <div class="flex flex-col items-center">
+                        <div class="step-indicator w-8 h-8 md:w-12 md:h-12 rounded-full flex items-center justify-center font-bold text-sm md:text-lg border-2 border-gray-300 text-gray-400" data-step="4">4</div>
+                        <span class="text-xs mt-1 md:mt-2 font-medium text-gray-400">Resume</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Form Container -->
+            <form id="pendaftaranForm" class="bg-white rounded-xl shadow-md overflow-hidden">
+                <!-- Step 1: Pilih Mata Lomba -->
+                <div class="form-step active p-4 md:p-8" data-step="1">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center">
+                        <i class="fas fa-trophy text-emerald-600 mr-3"></i>Pilih Mata Lomba
+                    </h2>
+                    
+                    <div class="grid sm:grid-cols-2 gap-3 md:gap-4" id="lombaOptions">
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="lccp" data-jenis="regu" data-jumlah="3">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-brain text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LCC-PAI</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">3 orang (bebas gender)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="ldc" data-jenis="perorangan" data-jumlah="1">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-microphone text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LDC</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">1 orang (Putra/Putri)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="mtq" data-jenis="perorangan" data-jumlah="1">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-book-quran text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">MTQ</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">1 orang (Putra/Putri)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="mhq" data-jenis="perorangan" data-jumlah="1">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-memory text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">MHQ</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">1 orang (Putra/Putri)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="lki" data-jenis="perorangan" data-jumlah="1">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-pen-fancy text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LKI</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">1 orang (Putra/Putri)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="lpsb" data-jenis="regu" data-jumlah="3">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-praying-hands text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LPSB</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">3 org (2 Putra + 1 Putri)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="lsqr" data-jenis="grup" data-jumlah="11">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-drum text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LSQR</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">9-11 orang (homogen)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="lomba-option border-2 border-gray-200 rounded-xl p-3 md:p-4" data-lomba="lpa" data-jenis="perorangan" data-jumlah="1">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-lg flex items-center justify-center mr-3 md:mr-4 flex-shrink-0">
+                                    <i class="fas fa-bullhorn text-amber-400 text-lg md:text-xl"></i>
+                                </div>
+                                <div class="min-w-0">
+                                    <h4 class="font-bold text-gray-900 text-sm md:text-base">LPA</h4>
+                                    <p class="text-xs md:text-sm text-gray-500">1 Putra</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="jenisLomba" id="jenisLombaInput" required>
+                    
+                    <div class="flex justify-end mt-6 md:mt-8">
+                        <button type="button" onclick="nextStep(1)" class="btn-primary px-6 md:px-8 py-3 rounded-xl text-white font-bold touch-target">
+                            Lanjutkan <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 2: Data Sekolah -->
+                <div class="form-step p-4 md:p-8" data-step="2">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center">
+                        <i class="fas fa-school text-emerald-600 mr-3"></i>Data Sekolah
+                    </h2>
+                    
+                    <div class="space-y-4 md:space-y-6">
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Nama Sekolah <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="namaSekolah" required
+                                class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-900"
+                                placeholder="Contoh: SD Negeri 1 Bandung">
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4 md:gap-6">
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    NPSN <span class="text-red-500">*</span>
+                                </label>
+                                <input type="text" name="npsn" required maxlength="8"
+                                    class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-900"
+                                    placeholder="8 digit NPSN">
+                                <p class="text-xs text-gray-500 mt-1">Nomor Pokok Sekolah Nasional</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                    Kecamatan <span class="text-red-500">*</span>
+                                </label>
+                                <select name="kecamatan" required
+                                    class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none bg-white text-gray-900">
+                                    <option value="">Pilih Kecamatan</option>
+                                    <option value="Andir">Andir</option>
+                                    <option value="Antapani">Antapani</option>
+                                    <option value="Arcamanik">Arcamanik</option>
+                                    <option value="Astana Anyar">Astana Anyar</option>
+                                    <option value="Babakan Ciparay">Babakan Ciparay</option>
+                                    <option value="Bandung Kidul">Bandung Kidul</option>
+                                    <option value="Bandung Kulon">Bandung Kulon</option>
+                                    <option value="Bandung Wetan">Bandung Wetan</option>
+                                    <option value="Batununggal">Batununggal</option>
+                                    <option value="Bojongloa Kaler">Bojongloa Kaler</option>
+                                    <option value="Bojongloa Kidul">Bojongloa Kidul</option>
+                                    <option value="Buahbatu">Buahbatu</option>
+                                    <option value="Cibeunying Kaler">Cibeunying Kaler</option>
+                                    <option value="Cibeunying Kidul">Cibeunying Kidul</option>
+                                    <option value="Cibiru">Cibiru</option>
+                                    <option value="Cicendo">Cicendo</option>
+                                    <option value="Cidadap">Cidadap</option>
+                                    <option value="Cinambo">Cinambo</option>
+                                    <option value="Coblong">Coblong</option>
+                                    <option value="Gedebage">Gedebage</option>
+                                    <option value="Kiaracondong">Kiaracondong</option>
+                                    <option value="Lengkong">Lengkong</option>
+                                    <option value="Mandalajati">Mandalajati</option>
+                                    <option value="Panyileukan">Panyileukan</option>
+                                    <option value="Rancasari">Rancasari</option>
+                                    <option value="Regol">Regol</option>
+                                    <option value="Sukajadi">Sukajadi</option>
+                                    <option value="Sukasari">Sukasari</option>
+                                    <option value="Sumur Bandung">Sumur Bandung</option>
+                                    <option value="Ujung Berung">Ujung Berung</option>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                Alamat Lengkap Sekolah <span class="text-red-500">*</span>
+                            </label>
+                            <textarea name="alamatSekolah" required rows="3"
+                                class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none resize-none text-gray-900"
+                                placeholder="Alamat lengkap sekolah"></textarea>
+                        </div>
+                        
+                        <div class="border-t pt-4 md:pt-6">
+                            <h3 class="text-lg font-bold text-emerald-700 mb-4">
+                                <i class="fas fa-user-tie mr-2"></i>Data Guru/Pendamping
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4 md:gap-6">
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Nama Guru PAI/Pendamping <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="text" name="namaPendamping" required
+                                        class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-900"
+                                        placeholder="Nama lengkap pendamping">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                                        Nomor HP/WA Pendamping <span class="text-red-500">*</span>
+                                    </label>
+                                    <input type="tel" name="hpPendamping" required
+                                        class="input-field w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none text-gray-900"
+                                        placeholder="Contoh: 08123456789">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-6 md:mt-8">
+                        <button type="button" onclick="prevStep(2)" class="px-6 md:px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-xl font-bold hover:border-emerald-600 hover:text-emerald-700 transition touch-target">
+                            <i class="fas fa-arrow-left mr-2"></i>Kembali
+                        </button>
+                        <button type="button" onclick="nextStep(2)" class="btn-primary px-6 md:px-8 py-3 rounded-xl text-white font-bold touch-target">
+                            Lanjutkan <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 3: Data Peserta (Dinamis) -->
+                <div class="form-step p-4 md:p-8" data-step="3">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center">
+                        <i class="fas fa-users text-emerald-600 mr-3"></i>Data Peserta
+                    </h2>
+                    
+                    <!-- Info Lomba yang Dipilih -->
+                    <div class="bg-emerald-50 rounded-xl p-4 mb-6">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm text-gray-600">Mata Lomba</p>
+                                <p class="font-bold text-emerald-700" id="infoLombaTerpilih">-</p>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm text-gray-600">Jumlah Peserta</p>
+                                <p class="font-bold text-emerald-700" id="infoJumlahPeserta">-</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Form Dinamis -->
+                    <div id="dynamicPesertaForm" class="space-y-4 md:space-y-6">
+                        <!-- Akan diisi oleh JavaScript -->
+                    </div>
+                    
+                    <div class="flex justify-between mt-6 md:mt-8">
+                        <button type="button" onclick="prevStep(3)" class="px-6 md:px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-xl font-bold hover:border-emerald-600 hover:text-emerald-700 transition touch-target">
+                            <i class="fas fa-arrow-left mr-2"></i>Kembali
+                        </button>
+                        <button type="button" onclick="nextStep(3)" class="btn-primary px-6 md:px-8 py-3 rounded-xl text-white font-bold touch-target">
+                            Lanjutkan <i class="fas fa-arrow-right ml-2"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Step 4: Resume & Konfirmasi -->
+                <div class="form-step p-4 md:p-8" data-step="4">
+                    <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-4 md:mb-6 flex items-center">
+                        <i class="fas fa-clipboard-check text-emerald-600 mr-3"></i>Resume & Konfirmasi
+                    </h2>
+                    
+                    <div class="space-y-4 md:space-y-6">
+                        <!-- Card Ringkasan Lomba -->
+                        <div class="bg-emerald-50 rounded-xl p-4 md:p-6">
+                            <h3 class="font-bold text-emerald-800 mb-3">
+                                <i class="fas fa-trophy mr-2"></i>Informasi Lomba
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Mata Lomba</p>
+                                    <p class="font-semibold text-gray-900" id="resumeLomba">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Kecamatan</p>
+                                    <p class="font-semibold text-gray-900" id="resumeKecamatan">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Sekolah</p>
+                                    <p class="font-semibold text-gray-900" id="resumeSekolah">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">NPSN</p>
+                                    <p class="font-semibold text-gray-900" id="resumeNpsn">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Data Pendamping -->
+                        <div class="bg-amber-50 rounded-xl p-4 md:p-6">
+                            <h3 class="font-bold text-amber-800 mb-3">
+                                <i class="fas fa-user-tie mr-2"></i>Data Pendamping
+                            </h3>
+                            <div class="grid md:grid-cols-2 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-600">Nama</p>
+                                    <p class="font-semibold text-gray-900" id="resumeNamaPendamping">-</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">No. HP/WA</p>
+                                    <p class="font-semibold text-gray-900" id="resumeHpPendamping">-</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Card Data Peserta -->
+                        <div class="bg-blue-50 rounded-xl p-4 md:p-6">
+                            <h3 class="font-bold text-blue-800 mb-3">
+                                <i class="fas fa-users mr-2"></i>Data Peserta
+                            </h3>
+                            <div id="resumePesertaContainer" class="space-y-3">
+                                <!-- Akan diisi oleh JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <!-- Persetujuan -->
+                        <div class="bg-gray-50 rounded-xl p-4 md:p-6">
+                            <label class="flex items-start cursor-pointer">
+                                <input type="checkbox" name="persetujuan" id="persetujuanCheckbox" required class="mt-1 mr-3 w-5 h-5 text-emerald-600 rounded">
+                                <span class="text-sm text-gray-700">
+                                    Saya menyatakan bahwa data yang diisi adalah <strong>benar dan sesuai dengan fakta</strong>. 
+                                    Saya bersedia menerima sanksi jika terbukti memberikan data palsu. 
+                                    Saya juga menyetujui bahwa data ini akan digunakan untuk keperluan PENTAS PAI Kota Bandung 2026.
+                                </span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="flex justify-between mt-6 md:mt-8">
+                        <button type="button" onclick="prevStep(4)" class="px-6 md:px-8 py-3 border-2 border-gray-300 text-gray-600 rounded-xl font-bold hover:border-emerald-600 hover:text-emerald-700 transition touch-target">
+                            <i class="fas fa-arrow-left mr-2"></i>Edit Data
+                        </button>
+                        <button type="submit" id="submitBtn" class="btn-primary px-6 md:px-8 py-3 rounded-xl text-white font-bold touch-target" disabled>
+                            <i class="fas fa-paper-plane mr-2"></i>Submit Pendaftaran
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main>
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-6 md:p-8 text-center max-w-sm mx-4">
+            <div class="animate-spin rounded-full h-12 w-12 md:h-16 md:w-16 border-4 border-emerald-600 border-t-transparent mx-auto mb-4"></div>
+            <h3 class="text-lg md:text-xl font-bold text-gray-900 mb-2">Memproses</h3>
+            <p class="text-gray-600 text-sm">Mohon tunggu, sedang menyimpan data...</p>
+        </div>
+    </div>
+    
+    <!-- Success Modal dengan Bukti -->
+    <div id="successModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/70"></div>
+        <div class="absolute inset-4 md:inset-auto md:top-1/2 md:left-1/2 md:-translate-x-1/2 md:-translate-y-1/2 bg-white rounded-2xl p-4 md:p-8 max-w-lg w-full max-h-[90vh] overflow-auto">
+            <div class="text-center">
+                <div class="w-16 h-16 md:w-20 md:h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fas fa-check-circle text-3xl md:text-4xl text-emerald-600"></i>
+                </div>
+                <h3 class="text-xl md:text-2xl font-bold text-gray-900 mb-2">Pendaftaran Berhasil!</h3>
+                <p class="text-gray-600 text-sm md:text-base mb-4">Data pendaftaran Anda telah tersimpan.</p>
+                
+                <!-- Bukti Pendaftaran Card -->
+                <div id="buktiPendaftaran" class="bg-gray-50 rounded-xl p-4 md:p-6 mb-4 text-left border-2 border-emerald-200">
+                    <div class="text-center mb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <i class="fas fa-mosque text-emerald-600 text-2xl mr-2"></i>
+                            <span class="font-bold text-emerald-800">PENTAS PAI 2026</span>
+                        </div>
+                        <p class="text-xs text-gray-500">Kota Bandung</p>
+                    </div>
+                    
+                    <div class="text-center mb-4">
+                        <p class="text-xs text-gray-600 mb-1">ID Pendaftaran</p>
+                        <p class="text-xl md:text-2xl font-bold text-emerald-700" id="successId">-</p>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div id="qrcode"></div>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Mata Lomba:</span>
+                            <span class="font-semibold" id="buktiLomba">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Kecamatan:</span>
+                            <span class="font-semibold" id="buktiKecamatan">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">Sekolah:</span>
+                            <span class="font-semibold" id="buktiSekolah">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t text-center">
+                        <p class="text-xs text-gray-500">Simpan bukti ini. Verifikasi 1-2 hari kerja.</p>
+                    </div>
+                </div>
+                
+                <!-- Action Buttons -->
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="printBukti()" class="px-4 py-3 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 transition touch-target text-sm">
+                        <i class="fas fa-print mr-2"></i>Print PDF
+                    </button>
+                    <button onclick="shareWhatsApp()" class="px-4 py-3 bg-green-500 text-white rounded-lg font-semibold hover:bg-green-600 transition touch-target text-sm">
+                        <i class="fab fa-whatsapp mr-2"></i>Kirim WA
+                    </button>
+                </div>
+                <div class="mt-3">
+                    <a href="status.html" class="block w-full px-4 py-3 border-2 border-emerald-600 text-emerald-700 rounded-lg font-semibold hover:bg-emerald-50 transition touch-target text-sm">
+                        <i class="fas fa-search mr-2"></i>Cek Status
+                    </a>
+                </div>
+                <div class="mt-3">
+                    <a href="../index.html" class="text-gray-600 hover:text-emerald-700 transition text-sm">
+                        Kembali ke Beranda
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/form.js"></script>
+</body>
+</html>
