@@ -143,6 +143,30 @@
             transition: transform 0.3s ease;
         }
         .toggle-switch.active .toggle-slider { transform: translateX(24px); }
+    /* Perbaikan Dashboard */
+.section-content {
+    padding-bottom: 2rem;
+}
+
+#lombaChart {
+    max-height: 300px;
+    width: 100% !important;
+}
+
+.stat-card {
+    min-width: 0;
+}
+
+.grid {
+    gap: 1.5rem;
+}
+
+/* Untuk mobile, pastikan chart container tidak overflow */
+@media (max-width: 768px) {
+    #lombaChart {
+        max-height: 250px;
+    }
+}
     </style>
 </head>
 <body class="font-inter antialiased">
