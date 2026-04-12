@@ -13,7 +13,7 @@
 const CONFIG = {
     // Ganti dengan URL Google Apps Script Web App Anda
     GAS_WEB_APP_URL: localStorage.getItem('GAS_WEB_APP_URL') || 
-        'https://script.google.com/macros/s/AKfycbxHL9xUphboaU0VARy-69rul0vGsGDVLUDiodaiHyhNZYBRYI7rvmTZHyjMbN6OPHI/exec',
+        'https://script.google.com/macros/s/AKfycbyo1VOHEB9ejRu55vjDFf36xHsVly-jyOG85HLQva87EryD9CGmRz28U1AyLQ-9WA63/exec',
     
     // Google Form untuk upload berkas (opsional)
     GOOGLE_FORM_UPLOAD_URL: 'https://forms.gle/YOUR_FORM_ID',
