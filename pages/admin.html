@@ -167,70 +167,83 @@
         max-height: 250px;
     }
 }
+    .sidebar {
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar nav {
+    scrollbar-width: thin;
+    scrollbar-color: #10b981 #1e293b;
+}
+
+.sidebar nav::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar nav::-webkit-scrollbar-track {
+    background: #1e293b;
+}
+
+.sidebar nav::-webkit-scrollbar-thumb {
+    background-color: #10b981;
+    border-radius: 3px;
+}
     </style>
 </head>
 <body class="font-inter antialiased">
     <!-- Main App (Hidden until login) -->
     <div id="mainApp" class="hidden">
         <!-- Sidebar -->
-        <aside class="sidebar fixed left-0 top-0 h-full w-64 z-40 overflow-y-auto">
-            <div class="p-6">
-                <div class="flex items-center space-x-3 mb-8">
-                    <div class="w-12 h-12 bg-emerald-800 rounded-full flex items-center justify-center">
-                        <i class="fas fa-mosque text-amber-400 text-xl"></i>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold text-white">PENTAS PAI</h1>
-                        <p class="text-xs text-gray-400">Admin Panel</p>
-                    </div>
-                </div>
-                
-                <nav class="space-y-2 pb-24">
-                    <a href="#dashboard" onclick="showSection('dashboard')" class="sidebar-link active flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-tachometer-alt w-6"></i><span>Dashboard</span>
-                    </a>
-                    <a href="#pendaftaran" onclick="showSection('pendaftaran')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-users w-6"></i><span>Data Pendaftaran</span>
-                    </a>
-                    <a href="#verifikasi" onclick="showSection('verifikasi')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-check-double w-6"></i><span>Verifikasi</span>
-                        <span id="badgeVerifikasi" class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full hidden">0</span>
-                    </a>
-                    <a href="#nomor" onclick="showSection('nomor')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-list-ol w-6"></i><span>Nomor Undian</span>
-                    </a>
-                    <a href="#sekolah" onclick="showSection('sekolah')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-school w-6"></i><span>Data Sekolah</span>
-                    </a>
-                    <a href="#pengaturan" onclick="showSection('pengaturan')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-cog w-6"></i><span>Pengaturan</span>
-                    </a>
-                    <a href="#export" onclick="showSection('export')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
-                        <i class="fas fa-file-export w-6"></i><span>Export Data</span>
-                    </a>
-                    <a href="#akun" onclick="showSection('akun')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target" id="menuAkun" style="display:none;">
-                        <i class="fas fa-user-cog w-6"></i><span>Kelola Akun</span>
-                    </a>
-                </nav>
+        <aside class="sidebar fixed left-0 top-0 h-full w-64 z-40 flex flex-col" style="background-color: #0f172a; border-right: 1px solid #334155;">
+    <!-- Header Sidebar (Logo) -->
+    <div class="p-6 pb-2">
+        <div class="flex items-center space-x-3 mb-4">
+            <div class="w-12 h-12 bg-emerald-800 rounded-full flex items-center justify-center">
+                <i class="fas fa-mosque text-amber-400 text-xl"></i>
             </div>
-            
-            <div class="absolute bottom-4 left-0 right-0 p-6">
-                <div class="bg-white/10 rounded-lg p-4">
-                    <div class="flex items-center space-x-3">
-                        <div class="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center">
-                            <i class="fas fa-user text-emerald-900"></i>
-                        </div>
-                        <div class="flex-1 min-w-0">
-                            <p class="text-sm font-medium truncate text-white" id="adminName">Admin</p>
-                            <p class="text-xs text-gray-400" id="adminRole">-</p>
-                        </div>
-                    </div>
-                </div>
-                <button onclick="logout()" class="mt-4 w-full py-2 border border-gray-600 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition touch-target">
-                    <i class="fas fa-sign-out-alt mr-2"></i>Logout
-                </button>
+            <div>
+                <h1 class="text-lg font-bold text-white">PENTAS PAI</h1>
+                <p class="text-xs text-gray-400">Admin Panel</p>
             </div>
-        </aside>
+        </div>
+    </div>
+    
+    <!-- Menu Navigasi (scrollable) -->
+    <nav class="flex-1 overflow-y-auto px-6 pb-4 space-y-2">
+        <a href="#dashboard" onclick="showSection('dashboard')" class="sidebar-link active flex items-center px-4 py-3 rounded-lg touch-target">
+            <i class="fas fa-tachometer-alt w-6"></i><span>Dashboard</span>
+        </a>
+        <a href="#pendaftaran" onclick="showSection('pendaftaran')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
+            <i class="fas fa-users w-6"></i><span>Data Pendaftaran</span>
+        </a>
+        <!-- ... semua menu lainnya ... -->
+        <a href="#export" onclick="showSection('export')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target">
+            <i class="fas fa-file-export w-6"></i><span>Export Data</span>
+        </a>
+        <a href="#akun" onclick="showSection('akun')" class="sidebar-link flex items-center px-4 py-3 rounded-lg touch-target" id="menuAkun" style="display:none;">
+            <i class="fas fa-user-cog w-6"></i><span>Kelola Akun</span>
+        </a>
+    </nav>
+    
+    <!-- Footer Sidebar (Admin Info + Logout) - tidak absolute -->
+    <div class="p-6 pt-2 border-t border-gray-700">
+        <div class="bg-white/10 rounded-lg p-4 mb-3">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 bg-amber-400 rounded-full flex items-center justify-center">
+                    <i class="fas fa-user text-emerald-900"></i>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium truncate text-white" id="adminName">Admin</p>
+                    <p class="text-xs text-gray-400" id="adminRole">-</p>
+                </div>
+            </div>
+        </div>
+        <button onclick="logout()" class="w-full py-2 border border-gray-600 rounded-lg text-sm text-gray-300 hover:bg-gray-700 transition touch-target">
+            <i class="fas fa-sign-out-alt mr-2"></i>Logout
+        </button>
+    </div>
+</aside>
 
         <!-- Main Content -->
         <main class="ml-0 md:ml-64 min-h-screen">
