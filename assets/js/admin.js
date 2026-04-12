@@ -2,7 +2,7 @@
  * ============================================================
  * ADMIN PANEL - PENTAS PAI KOTA BANDUNG 2026
  * ============================================================
- * Script untuk admin panel dengan fitur lengkap
+ * Versi Final - Semua Fitur Lengkap
  * ============================================================
  */
 
@@ -198,13 +198,10 @@ function updateStats() {
 }
 
 function updateLombaChart() {
-    const lombaCount = {
-        lccp: 0, ldc: 0, mtq: 0, mhq: 0, lki: 0, lpsb: 0, lsqr: 0, lpa: 0
-    };
+    const lombaCount = { lccp: 0, ldc: 0, mtq: 0, mhq: 0, lki: 0, lpsb: 0, lsqr: 0, lpa: 0 };
     allData.forEach(d => { if (lombaCount[d.jenisLomba] !== undefined) lombaCount[d.jenisLomba]++; });
     
     const ctx = document.getElementById('lombaChart').getContext('2d');
-    
     if (chartInstance) chartInstance.destroy();
     
     chartInstance = new Chart(ctx, {
@@ -220,10 +217,7 @@ function updateLombaChart() {
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true,
-            plugins: {
-                legend: { labels: { color: '#f1f5f9' } }
-            },
+            plugins: { legend: { labels: { color: '#f1f5f9' } } },
             scales: {
                 y: { beginAtZero: true, ticks: { color: '#cbd5e1' }, grid: { color: '#334155' } },
                 x: { ticks: { color: '#cbd5e1' }, grid: { display: false } }
@@ -267,10 +261,7 @@ function renderTable() {
     const end = start + itemsPerPage;
     const pageData = filteredData.slice(start, end);
     
-    const lombaNames = {
-        lccp: 'LCC-PAI', ldc: 'LDC', mtq: 'MTQ', mhq: 'MHQ',
-        lki: 'LKI', lpsb: 'LPSB', lsqr: 'LSQR', lpa: 'LPA'
-    };
+    const lombaNames = { lccp: 'LCC-PAI', ldc: 'LDC', mtq: 'MTQ', mhq: 'MHQ', lki: 'LKI', lpsb: 'LPSB', lsqr: 'LSQR', lpa: 'LPA' };
     
     tbody.innerHTML = pageData.map(d => `
         <tr>
@@ -303,48 +294,27 @@ function renderTable() {
 }
 
 function getStatusClass(status) {
-    return status === 'TERVERIFIKASI' ? 'status-terverifikasi' : 
-           status === 'DITOLAK' ? 'status-ditolak' : 'status-menunggu';
+    return status === 'TERVERIFIKASI' ? 'status-terverifikasi' : status === 'DITOLAK' ? 'status-ditolak' : 'status-menunggu';
 }
-
 function getStatusLabel(status) {
-    return status === 'TERVERIFIKASI' ? 'Terverifikasi' : 
-           status === 'DITOLAK' ? 'Ditolak' : 'Menunggu';
+    return status === 'TERVERIFIKASI' ? 'Terverifikasi' : status === 'DITOLAK' ? 'Ditolak' : 'Menunggu';
 }
-
 function canVerify() {
     return currentUser && (currentUser.role === 'super_admin' || currentUser.role === 'verifikator');
 }
-
 function filterData() {
     const lomba = document.getElementById('filterLomba').value;
     const status = document.getElementById('filterStatus').value;
-    
-    filteredData = allData.filter(d => 
-        (!lomba || d.jenisLomba === lomba) && (!status || d.status === status)
-    );
-    currentPage = 1;
-    renderTable();
+    filteredData = allData.filter(d => (!lomba || d.jenisLomba === lomba) && (!status || d.status === status));
+    currentPage = 1; renderTable();
 }
-
 function searchData() {
-    const query = document.getElementById('searchData').value.toLowerCase();
-    filteredData = allData.filter(d => 
-        d.namaPeserta.toLowerCase().includes(query) || d.id.toLowerCase().includes(query)
-    );
-    currentPage = 1;
-    renderTable();
+    const q = document.getElementById('searchData').value.toLowerCase();
+    filteredData = allData.filter(d => d.namaPeserta.toLowerCase().includes(q) || d.id.toLowerCase().includes(q));
+    currentPage = 1; renderTable();
 }
-
-function prevPage() {
-    if (currentPage > 1) { currentPage--; renderTable(); }
-}
-
-function nextPage() {
-    if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) {
-        currentPage++; renderTable();
-    }
-}
+function prevPage() { if (currentPage > 1) { currentPage--; renderTable(); } }
+function nextPage() { if (currentPage < Math.ceil(filteredData.length / itemsPerPage)) { currentPage++; renderTable(); } }
 
 // ============================================
 // DETAIL & VERIFICATION
@@ -354,498 +324,226 @@ function showDetail(id) {
     const data = allData.find(d => d.id === id);
     if (!data) return;
     
-    const modal = document.getElementById('detailModal');
     const content = document.getElementById('detailContent');
-    
     content.innerHTML = `
         <div class="grid md:grid-cols-2 gap-4">
-            <div>
-                <h4 class="font-bold text-emerald-400 mb-3">Informasi Pendaftaran</h4>
-                <div class="space-y-2">
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">ID</span>
-                        <span class="text-white">${data.id}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Status</span>
-                        <span class="text-white">${getStatusLabel(data.status)}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Tanggal</span>
-                        <span class="text-white">${formatTanggalIndonesia(data.timestamp)}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Lomba</span>
-                        <span class="text-white">${data.jenisLomba}</span>
-                    </div>
-                </div>
+            <div><h4 class="font-bold text-emerald-400 mb-3">Informasi Pendaftaran</h4>
+                <div class="space-y-2"><div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">ID</span><span class="text-white">${data.id}</span></div>
+                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Status</span><span class="text-white">${getStatusLabel(data.status)}</span></div>
+                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Tanggal</span><span class="text-white">${formatTanggalIndonesia(data.timestamp)}</span></div>
+                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Lomba</span><span class="text-white">${data.jenisLomba}</span></div></div>
             </div>
-            <div>
-                <h4 class="font-bold text-emerald-400 mb-3">Data Peserta</h4>
-                <div class="space-y-2">
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Nama</span>
-                        <span class="text-white">${data.namaPeserta}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Sekolah</span>
-                        <span class="text-white">${data.namaSekolah}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Kecamatan</span>
-                        <span class="text-white">${data.kecamatan}</span>
-                    </div>
-                </div>
+            <div><h4 class="font-bold text-emerald-400 mb-3">Data Peserta</h4>
+                <div class="space-y-2"><div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Nama</span><span class="text-white">${data.namaPeserta}</span></div>
+                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Sekolah</span><span class="text-white">${data.namaSekolah}</span></div>
+                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Kecamatan</span><span class="text-white">${data.kecamatan}</span></div></div>
             </div>
         </div>
         ${canVerify() && data.status === 'MENUNGGU_VERIFIKASI' ? `
             <div class="mt-6 flex gap-3">
-                <button onclick="verifyData('${data.id}', 'TERVERIFIKASI'); closeDetailModal();" 
-                    class="flex-1 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button>
-                <button onclick="verifyData('${data.id}', 'DITOLAK'); closeDetailModal();" 
-                    class="flex-1 py-2 bg-red-700 text-white rounded-lg">Tolak</button>
+                <button onclick="verifyData('${data.id}', 'TERVERIFIKASI'); closeDetailModal();" class="flex-1 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button>
+                <button onclick="verifyData('${data.id}', 'DITOLAK'); closeDetailModal();" class="flex-1 py-2 bg-red-700 text-white rounded-lg">Tolak</button>
             </div>
         ` : ''}
     `;
-    
-    modal.classList.remove('hidden');
+    document.getElementById('detailModal').classList.remove('hidden');
 }
-
-function closeDetailModal() {
-    document.getElementById('detailModal').classList.add('hidden');
-}
+function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
 async function verifyData(id, status) {
-    if (!canVerify()) {
-        showNotification('Anda tidak memiliki akses', 'error');
-        return;
-    }
-    
-    const catatan = status === 'DITOLAK' ? prompt('Masukkan alasan penolakan:') : '';
-    
+    if (!canVerify()) { showNotification('Tidak ada akses', 'error'); return; }
+    const catatan = status === 'DITOLAK' ? prompt('Alasan penolakan:') : '';
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'updateStatus',
-                id: id, status: status, catatan: catatan,
-                verifiedBy: currentUser.username
-            })
+        const r = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'updateStatus', id, status, catatan, verifiedBy: currentUser.username })
         });
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification(`Status berhasil diubah`, 'success');
-            refreshData();
-        } else {
-            throw new Error(result.message);
-        }
-    } catch (error) {
-        showNotification('Gagal: ' + error.message, 'error');
-    }
+        const d = await r.json();
+        if (d.success) { showNotification('Status diperbarui', 'success'); refreshData(); }
+        else throw new Error(d.message);
+    } catch (e) { showNotification('Gagal: ' + e.message, 'error'); }
 }
 
 // ============================================
 // NOMOR UNDIAN
 // ============================================
-
 function renderNomorTable() {
     const tbody = document.getElementById('nomorTableBody');
-    const lombaCodes = ['lccp', 'ldc', 'mtq', 'mhq', 'lki', 'lpsb', 'lsqr', 'lpa'];
-    
-    tbody.innerHTML = kecamatanList.map(kec => `
-        <tr>
-            <td class="px-3 py-2">${kec}</td>
-            ${lombaCodes.map(lomba => {
-                const nomor = nomorUndianData[kec]?.[lomba] || '-';
-                return `<td class="px-3 py-2 text-center">${nomor}</td>`;
-            }).join('')}
-        </tr>
-    `).join('');
+    const cols = ['lccp','ldc','mtq','mhq','lki','lpsb','lsqr','lpa'];
+    tbody.innerHTML = kecamatanList.map(k => `<tr><td>${k}</td>${cols.map(c => `<td class="text-center">${nomorUndianData[k]?.[c] || '-'}</td>`).join('')}</tr>`).join('');
 }
-
 async function saveNomorUndian() {
-    const kecamatan = document.getElementById('inputKecamatanNomor').value;
-    const lomba = document.getElementById('inputLombaNomor').value;
-    const nomor = document.getElementById('inputNomor').value;
-    
-    if (!kecamatan || !lomba || !nomor) {
-        showNotification('Semua field wajib diisi', 'error');
-        return;
-    }
-    
+    const k = document.getElementById('inputKecamatanNomor').value;
+    const l = document.getElementById('inputLombaNomor').value;
+    const n = document.getElementById('inputNomor').value;
+    if (!k || !l || !n) return showNotification('Lengkapi field', 'error');
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'saveNomorUndian',
-                kecamatan, lomba, nomor: parseInt(nomor)
-            })
+        const r = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'saveNomorUndian', kecamatan: k, lomba: l, nomor: parseInt(n) })
         });
-        const result = await response.json();
-        
-        if (result.success) {
-            showNotification('Nomor undian disimpan', 'success');
-            loadMasterData();
-        }
-    } catch (error) {
-        showNotification('Gagal menyimpan', 'error');
-    }
+        if ((await r.json()).success) { showNotification('Nomor disimpan', 'success'); loadMasterData(); }
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
-
 async function publishNomorUndian() {
     try {
-        await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'publishNomorUndian' })
-        });
-        showNotification('Nomor undian dipublikasikan', 'success');
-    } catch (error) {
-        showNotification('Gagal publish', 'error');
-    }
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'publishNomorUndian' }) });
+        showNotification('Dipublikasikan', 'success');
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
 
 // ============================================
-// DATA SEKOLAH
+// SEKOLAH
 // ============================================
-
 function renderSekolahTable() {
-    const tbody = document.getElementById('sekolahTableBody');
-    tbody.innerHTML = sekolahList.map(s => `
-        <tr>
-            <td class="px-3 py-2">${s.npsn}</td>
-            <td class="px-3 py-2">${s.nama_sekolah}</td>
-            <td class="px-3 py-2">${s.kecamatan}</td>
-            <td class="px-3 py-2">${s.alamat_lengkap || '-'}</td>
-            <td class="px-3 py-2">
-                <button onclick="editSekolah('${s.npsn}')" class="text-emerald-400 mr-2"><i class="fas fa-edit"></i></button>
-                <button onclick="deleteSekolah('${s.npsn}')" class="text-red-400"><i class="fas fa-trash"></i></button>
-            </td>
-        </tr>
+    document.getElementById('sekolahTableBody').innerHTML = sekolahList.map(s => `
+        <tr><td>${s.npsn}</td><td>${s.nama_sekolah}</td><td>${s.kecamatan}</td><td>${s.alamat_lengkap||'-'}</td>
+        <td><button onclick="editSekolah('${s.npsn}')" class="text-emerald-400 mr-2"><i class="fas fa-edit"></i></button>
+        <button onclick="deleteSekolah('${s.npsn}')" class="text-red-400"><i class="fas fa-trash"></i></button></td></tr>
     `).join('');
 }
-
 async function saveSekolah() {
-    const npsn = document.getElementById('inputNPSN').value;
-    const nama = document.getElementById('inputNamaSekolah').value;
-    const kecamatan = document.getElementById('inputKecamatanSekolah').value;
-    const alamat = document.getElementById('inputAlamatSekolah').value;
-    
-    if (!npsn || !nama || !kecamatan) {
-        showNotification('NPSN, Nama, Kecamatan wajib', 'error');
-        return;
-    }
-    
+    const n = document.getElementById('inputNPSN').value;
+    const nm = document.getElementById('inputNamaSekolah').value;
+    const k = document.getElementById('inputKecamatanSekolah').value;
+    const a = document.getElementById('inputAlamatSekolah').value;
+    if (!n || !nm || !k) return showNotification('NPSN, Nama, Kecamatan wajib', 'error');
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'saveSekolah',
-                npsn, nama_sekolah: nama, kecamatan, alamat_lengkap: alamat
-            })
+        const r = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'saveSekolah', npsn: n, nama_sekolah: nm, kecamatan: k, alamat_lengkap: a })
         });
-        const result = await response.json();
-        if (result.success) {
-            showNotification('Data sekolah disimpan', 'success');
-            loadMasterData();
-        }
-    } catch (error) {
-        showNotification('Gagal menyimpan', 'error');
-    }
+        if ((await r.json()).success) { showNotification('Sekolah disimpan', 'success'); loadMasterData(); }
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
-
 function editSekolah(npsn) {
-    const sekolah = sekolahList.find(s => s.npsn === npsn);
-    if (sekolah) {
-        document.getElementById('inputNPSN').value = sekolah.npsn;
-        document.getElementById('inputNamaSekolah').value = sekolah.nama_sekolah;
-        document.getElementById('inputKecamatanSekolah').value = sekolah.kecamatan;
-        document.getElementById('inputAlamatSekolah').value = sekolah.alamat_lengkap || '';
+    const s = sekolahList.find(s => s.npsn === npsn);
+    if (s) {
+        document.getElementById('inputNPSN').value = s.npsn;
+        document.getElementById('inputNamaSekolah').value = s.nama_sekolah;
+        document.getElementById('inputKecamatanSekolah').value = s.kecamatan;
+        document.getElementById('inputAlamatSekolah').value = s.alamat_lengkap || '';
     }
 }
-
 async function deleteSekolah(npsn) {
-    if (!confirm('Yakin hapus sekolah ini?')) return;
+    if (!confirm('Yakin hapus?')) return;
     try {
-        await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'deleteSekolah', npsn })
-        });
-        showNotification('Sekolah dihapus', 'success');
-        loadMasterData();
-    } catch (error) {
-        showNotification('Gagal menghapus', 'error');
-    }
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteSekolah', npsn }) });
+        showNotification('Dihapus', 'success'); loadMasterData();
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
 
 // ============================================
 // PENGATURAN
 // ============================================
-
 async function toggleFormPendaftaran() {
-    const toggle = document.getElementById('toggleFormSwitch');
-    const isActive = toggle.classList.contains('active');
-    
+    const t = document.getElementById('toggleFormSwitch');
+    const isActive = t.classList.contains('active');
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'toggleForm',
-                status: !isActive
-            })
-        });
-        const result = await response.json();
-        if (result.success) {
-            toggle.classList.toggle('active');
-            showNotification(`Form ${!isActive ? 'diaktifkan' : 'dinonaktifkan'}`, 'success');
-        }
-    } catch (error) {
-        showNotification('Gagal mengubah status', 'error');
-    }
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'toggleForm', status: !isActive }) });
+        t.classList.toggle('active');
+        showNotification(`Form ${!isActive ? 'aktif' : 'nonaktif'}`, 'success');
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
-
 async function saveWaAdmin() {
     const wa = document.getElementById('inputWaAdmin').value;
     try {
-        await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'saveConfig', setting: 'whatsapp_admin', value: wa })
-        });
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'saveConfig', setting: 'whatsapp_admin', value: wa }) });
         showNotification('Nomor WA disimpan', 'success');
-    } catch (error) {
-        showNotification('Gagal menyimpan', 'error');
-    }
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
 
 // ============================================
 // EXPORT
 // ============================================
-
 function exportData() {
-    const status = document.getElementById('exportStatus').value;
-    const lomba = document.getElementById('exportLomba').value;
-    
-    let data = allData;
-    if (status) data = data.filter(d => d.status === status);
-    if (lomba) data = data.filter(d => d.jenisLomba === lomba);
-    
-    const headers = ['ID', 'Nama', 'Sekolah', 'Kecamatan', 'Lomba', 'Status', 'Tanggal'];
-    const rows = data.map(d => [d.id, d.namaPeserta, d.namaSekolah, d.kecamatan, d.jenisLomba, d.status, d.timestamp]);
-    const csv = [headers, ...rows].map(row => row.join(',')).join('\n');
-    
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = `pendaftaran_${new Date().toISOString().slice(0,10)}.csv`;
-    a.click();
+    const s = document.getElementById('exportStatus').value;
+    const l = document.getElementById('exportLomba').value;
+    let data = allData.filter(d => (!s || d.status===s) && (!l || d.jenisLomba===l));
+    const csv = [['ID','Nama','Sekolah','Kecamatan','Lomba','Status','Tanggal']].concat(data.map(d => [d.id,d.namaPeserta,d.namaSekolah,d.kecamatan,d.jenisLomba,d.status,d.timestamp])).map(r=>r.join(',')).join('\n');
+    const b = new Blob([csv], {type:'text/csv'});
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = `pendaftaran_${new Date().toISOString().slice(0,10)}.csv`; a.click();
 }
 
 // ============================================
-// AKUN ADMIN
+// KELOLA AKUN
 // ============================================
-
-async function tambahAkun() {
-    const username = document.getElementById('newUsername').value;
-    const nama = document.getElementById('newNama').value;
-    const password = document.getElementById('newPassword').value;
-    const role = document.getElementById('newRole').value;
-    
-    if (!username || !nama || !password || !role) {
-        showNotification('Semua field wajib', 'error');
-        return;
-    }
-    
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    
-    try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({
-                action: 'addAdmin',
-                username, passwordHash, nama_lengkap: nama, role
-            })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showNotification('Akun ditambahkan', 'success');
-            document.getElementById('newUsername').value = '';
-            document.getElementById('newNama').value = '';
-            document.getElementById('newPassword').value = '';
-            document.getElementById('newRole').value = '';
-        }
-    } catch (error) {
-        showNotification('Gagal menambah akun', 'error');
-    }
-}
-// ============================================
-// KELOLA AKUN - LENGKAP
-// ============================================
-
 async function loadAkunList() {
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'getAdminList' })
-        });
-        const result = await response.json();
-        if (result.success) {
-            renderAkunTable(result.data);
-        }
-    } catch (error) {
-        console.error('Gagal load akun:', error);
-    }
+        const r = await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'getAdminList' }) });
+        const d = await r.json();
+        if (d.success) renderAkunTable(d.data);
+    } catch (e) { console.error(e); }
 }
-
-function renderAkunTable(akunList) {
+function renderAkunTable(list) {
     const tbody = document.getElementById('akunTableBody');
     if (!tbody) return;
-    
-    tbody.innerHTML = akunList.map(a => `
-        <tr>
-            <td class="px-3 py-2">${a.username}</td>
-            <td class="px-3 py-2">${a.nama_lengkap}</td>
-            <td class="px-3 py-2">${a.role}</td>
-            <td class="px-3 py-2">
-                <span class="status-badge ${a.status === 'aktif' ? 'status-terverifikasi' : 'status-ditolak'}">${a.status}</span>
-            </td>
-            <td class="px-3 py-2">
-                ${a.username !== 'admin' ? `
-                    <button onclick="toggleStatusAkun('${a.username}', '${a.status}')" class="text-amber-400 mr-2" title="Toggle Status">
-                        <i class="fas ${a.status === 'aktif' ? 'fa-ban' : 'fa-check'}"></i>
-                    </button>
-                    <button onclick="resetPasswordAdmin('${a.username}')" class="text-blue-400 mr-2" title="Reset Password">
-                        <i class="fas fa-key"></i>
-                    </button>
-                    <button onclick="hapusAkun('${a.username}')" class="text-red-400" title="Hapus">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                ` : '<span class="text-gray-500 text-xs">Default</span>'}
-            </td>
-        </tr>
+    tbody.innerHTML = list.map(a => `
+        <tr><td>${a.username}</td><td>${a.nama_lengkap}</td><td>${a.role}</td>
+        <td><span class="status-badge ${a.status==='aktif'?'status-terverifikasi':'status-ditolak'}">${a.status}</span></td>
+        <td>${a.username!=='admin'?`
+            <button onclick="toggleStatusAkun('${a.username}','${a.status}')" class="text-amber-400 mr-2"><i class="fas ${a.status==='aktif'?'fa-ban':'fa-check'}"></i></button>
+            <button onclick="resetPasswordAdmin('${a.username}')" class="text-blue-400 mr-2"><i class="fas fa-key"></i></button>
+            <button onclick="hapusAkun('${a.username}')" class="text-red-400"><i class="fas fa-trash"></i></button>
+        `:'<span class="text-gray-500">Default</span>'}</td></tr>
     `).join('');
 }
-
-async function toggleStatusAkun(username, currentStatus) {
-    const newStatus = currentStatus === 'aktif' ? 'nonaktif' : 'aktif';
-    if (!confirm(`Ubah status ${username} menjadi ${newStatus}?`)) return;
-    
+async function toggleStatusAkun(u, s) {
+    const ns = s==='aktif'?'nonaktif':'aktif';
+    if (!confirm(`Ubah ${u} ke ${ns}?`)) return;
     try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'updateAdminStatus', username, status: newStatus })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showNotification(`Status ${username} diubah`, 'success');
-            loadAkunList();
-        }
-    } catch (error) {
-        showNotification('Gagal mengubah status', 'error');
-    }
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'updateAdminStatus', username: u, status: ns }) });
+        showNotification('Status diubah', 'success'); loadAkunList();
+    } catch (e) { showNotification('Gagal', 'error'); }
+}
+async function resetPasswordAdmin(u) {
+    const p = prompt('Password baru:');
+    if (!p) return;
+    const enc = new TextEncoder(); const hash = await crypto.subtle.digest('SHA-256', enc.encode(p));
+    const ph = Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    try {
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'resetAdminPassword', username: u, passwordHash: ph }) });
+        showNotification('Password direset', 'success');
+    } catch (e) { showNotification('Gagal', 'error'); }
+}
+async function hapusAkun(u) {
+    if (!confirm(`Hapus akun ${u}?`)) return;
+    try {
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'deleteAdmin', username: u }) });
+        showNotification('Akun dihapus', 'success'); loadAkunList();
+    } catch (e) { showNotification('Gagal', 'error'); }
+}
+async function tambahAkun() {
+    const u = document.getElementById('newUsername').value;
+    const n = document.getElementById('newNama').value;
+    const p = document.getElementById('newPassword').value;
+    const r = document.getElementById('newRole').value;
+    if (!u||!n||!p||!r) return showNotification('Lengkapi field', 'error');
+    const enc = new TextEncoder(); const hash = await crypto.subtle.digest('SHA-256', enc.encode(p));
+    const ph = Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    try {
+        await fetch(CONFIG.GAS_WEB_APP_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'addAdmin', username: u, passwordHash: ph, nama_lengkap: n, role: r }) });
+        showNotification('Akun ditambah', 'success'); loadAkunList();
+        document.getElementById('newUsername').value = document.getElementById('newNama').value = document.getElementById('newPassword').value = document.getElementById('newRole').value = '';
+    } catch (e) { showNotification('Gagal', 'error'); }
 }
 
-async function resetPasswordAdmin(username) {
-    const newPass = prompt(`Masukkan password baru untuk ${username}:`);
-    if (!newPass) return;
-    
-    const encoder = new TextEncoder();
-    const data = encoder.encode(newPass);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    
-    try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'resetAdminPassword', username, passwordHash })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showNotification(`Password ${username} direset`, 'success');
-        }
-    } catch (error) {
-        showNotification('Gagal reset password', 'error');
-    }
-}
-
-async function hapusAkun(username) {
-    if (!confirm(`Yakin hapus akun ${username}?`)) return;
-    
-    try {
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'deleteAdmin', username })
-        });
-        const result = await response.json();
-        if (result.success) {
-            showNotification(`Akun ${username} dihapus`, 'success');
-            loadAkunList();
-        }
-    } catch (error) {
-        showNotification('Gagal menghapus akun', 'error');
-    }
-}
 // ============================================
 // NAVIGATION
 // ============================================
-
-function showSection(section) {
-    document.querySelectorAll('.sidebar-link').forEach(link => link.classList.remove('active'));
-    document.querySelector(`a[href="#${section}"]`)?.classList.add('active');
-    
-    document.querySelectorAll('.section-content').forEach(el => el.classList.add('hidden'));
-    document.getElementById(`${section}Section`).classList.remove('hidden');
-    
-    const titles = {
-        dashboard: 'Dashboard', pendaftaran: 'Data Pendaftaran', verifikasi: 'Verifikasi',
-        nomor: 'Nomor Undian', sekolah: 'Data Sekolah', pengaturan: 'Pengaturan',
-        export: 'Export Data', akun: 'Kelola Akun'
-    };
-    document.getElementById('pageTitle').textContent = titles[section] || 'Dashboard';
-    
-    if (section === 'verifikasi') {
-        renderVerifikasiList();
-        if (section === 'akun') {
-        loadAkunList();
+function showSection(s) {
+    document.querySelectorAll('.sidebar-link').forEach(l=>l.classList.remove('active'));
+    document.querySelector(`a[href="#${s}"]`)?.classList.add('active');
+    document.querySelectorAll('.section-content').forEach(c=>c.classList.add('hidden'));
+    document.getElementById(`${s}Section`).classList.remove('hidden');
+    document.getElementById('pageTitle').textContent = { dashboard:'Dashboard', pendaftaran:'Data Pendaftaran', verifikasi:'Verifikasi', nomor:'Nomor Undian', sekolah:'Data Sekolah', pengaturan:'Pengaturan', export:'Export Data', akun:'Kelola Akun' }[s]||'Dashboard';
+    if (s==='verifikasi') {
+        const c = document.getElementById('verifikasiList');
+        const m = allData.filter(d=>d.status==='MENUNGGU_VERIFIKASI');
+        c.innerHTML = m.map(d=>`<div class="flex justify-between p-4 bg-gray-800 rounded-lg"><div><p class="text-white">${d.namaPeserta} - ${d.jenisLomba}</p><p class="text-sm text-gray-400">${d.namaSekolah}, ${d.kecamatan}</p></div><div class="flex gap-2"><button onclick="verifyData('${d.id}','TERVERIFIKASI')" class="px-3 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button><button onclick="verifyData('${d.id}','DITOLAK')" class="px-3 py-2 bg-red-700 text-white rounded-lg">Tolak</button></div></div>`).join('')||'<p class="text-gray-400 text-center">Tidak ada data</p>';
     }
+    if (s==='akun') loadAkunList();
 }
 
-function renderVerifikasiList() {
-    const container = document.getElementById('verifikasiList');
-    const menunggu = allData.filter(d => d.status === 'MENUNGGU_VERIFIKASI');
-    
-    container.innerHTML = menunggu.map(d => `
-        <div class="flex items-center justify-between p-4 rounded-lg" style="background-color: #0f172a;">
-            <div>
-                <p class="font-semibold text-white">${d.namaPeserta} - ${d.jenisLomba}</p>
-                <p class="text-sm text-gray-400">${d.namaSekolah}, ${d.kecamatan}</p>
-            </div>
-            <div class="flex gap-2">
-                <button onclick="verifyData('${d.id}', 'TERVERIFIKASI')" class="px-3 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button>
-                <button onclick="verifyData('${d.id}', 'DITOLAK')" class="px-3 py-2 bg-red-700 text-white rounded-lg">Tolak</button>
-            </div>
-        </div>
-    `).join('') || '<p class="text-gray-400 text-center">Tidak ada pendaftaran menunggu verifikasi</p>';
-}
-
-// ========== START ==========
-document.addEventListener('DOMContentLoaded', () => {
-    if (currentUser) showMainApp();
-    else window.location.href = 'login.html';
-});
+// Start
+document.addEventListener('DOMContentLoaded', ()=> currentUser ? showMainApp() : window.location.href = 'login.html');
