@@ -692,6 +692,7 @@ function prepareSubmissionData() {
         maqro: formData.maqro || null,
         peserta: peserta,
         jumlahPeserta: peserta.length,
+        berkas: formData.berkas || null,
         status: 'MENUNGGU_VERIFIKASI'
     };
 }
