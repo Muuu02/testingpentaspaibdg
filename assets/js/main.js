@@ -428,14 +428,18 @@ function initFloatingWhatsApp() {
 }
 
 // ============================================
-// LOAD CONFIG DARI GAS (Opsional)
+// LOAD CONFIG DARI GAS (Diperbarui untuk atasi CORS)
 // ============================================
 
 async function loadSystemConfig() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+                // Diubah ke text/plain agar tidak memicu preflight CORS
+                'Content-Type': 'text/plain;charset=utf-8' 
+            },
+            redirect: 'follow', // Penting untuk mengikuti redirect 302 dari Google
             body: JSON.stringify({ action: 'getConfig' })
         });
         const result = await response.json();
@@ -445,7 +449,7 @@ async function loadSystemConfig() {
             initFloatingWhatsApp();
         }
     } catch (error) {
-        console.warn('Gagal load config, menggunakan default');
+        console.warn('Gagal load config, menggunakan default', error);
         initFloatingWhatsApp();
     }
 }
