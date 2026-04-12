@@ -42,7 +42,8 @@ async function handleLogin(e) {
         
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'login',
                 username: username,
@@ -136,7 +137,8 @@ async function loadMasterData() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({ action: 'getMasterData' })
         });
         const result = await response.json();
@@ -201,7 +203,8 @@ async function loadPendaftaranData() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({ action: 'getAllData' })
         });
         const result = await response.json();
@@ -469,7 +472,8 @@ async function verifyData(id, status) {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'updateStatus',
                 id: id, status: status, catatan: catatan,
@@ -521,7 +525,8 @@ async function saveNomorUndian() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'saveNomorUndian',
                 kecamatan, lomba, nomor: parseInt(nomor)
@@ -542,7 +547,8 @@ async function publishNomorUndian() {
     try {
         await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({ action: 'publishNomorUndian' })
         });
         showNotification('Nomor undian dipublikasikan', 'success');
@@ -585,7 +591,8 @@ async function saveSekolah() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'saveSekolah',
                 npsn, nama_sekolah: nama, kecamatan, alamat_lengkap: alamat
@@ -627,7 +634,8 @@ async function toggleFormPendaftaran() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'toggleForm',
                 status: !isActive
@@ -692,7 +700,8 @@ async function tambahAkun() {
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'addAdmin',
                 username, passwordHash, nama_lengkap: nama, role
