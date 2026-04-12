@@ -737,6 +737,46 @@ function shareWhatsApp() {
     window.open(`https://wa.me/?text=${text}`, '_blank');
 }
 
+function printBukti() {
+    const buktiContent = document.getElementById('buktiPendaftaran').cloneNode(true);
+    const printWindow = window.open('', '_blank', 'width=800,height=600');
+    
+    printWindow.document.write(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Bukti Pendaftaran - PENTAS PAI 2026</title>
+            <meta charset="UTF-8">
+            <script src="https://cdn.tailwindcss.com"><\/script>
+            <style>
+                body { background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; }
+                #print-content { max-width: 500px; margin: 0 auto; background: #0f172a; border-radius: 16px; padding: 24px; border: 2px solid #10b981; }
+                @media print { body { background: white; } #print-content { box-shadow: none; border: 2px solid #065f46; background: white; } .no-print { display: none !important; } }
+            </style>
+        </head>
+        <body>
+            <div id="print-content">
+                ${buktiContent.outerHTML}
+                <div class="no-print text-center mt-6">
+                    <button onclick="window.print()" class="px-6 py-3 bg-emerald-600 text-white rounded-lg font-semibold">Cetak / Simpan PDF</button>
+                    <p class="text-xs text-gray-400 mt-3">Klik tombol di atas atau tekan Ctrl+P</p>
+                </div>
+            </div>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"><\/script>
+        </body>
+        </html>
+    `);
+    printWindow.document.close();
+    setTimeout(() => { printWindow.focus(); printWindow.print(); }, 300);
+}
+
+function shareWhatsApp() {
+    const id = document.getElementById('successId').textContent;
+    const lomba = LOMBA_DATA[selectedLomba].kode;
+    const text = `*Bukti Pendaftaran PENTAS PAI 2026*%0A%0AID: ${id}%0AMata Lomba: ${lomba}%0ASekolah: ${formData.namaSekolah}%0AKecamatan: ${formData.kecamatan}%0A%0ASimpan bukti ini untuk verifikasi.`;
+    window.open(`https://wa.me/?text=${text}`, '_blank');
+}
+
 // ============================================
 // INITIALIZATION
 // ============================================
