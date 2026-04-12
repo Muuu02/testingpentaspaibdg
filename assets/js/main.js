@@ -11,7 +11,7 @@
 // ============================================
 const CONFIG = {
     // Ganti dengan URL Google Apps Script Web App Anda
-    GAS_WEB_APP_URL: localStorage.getItem('GAS_WEB_APP_URL') || 'https://script.google.com/macros/s/AKfycbxzYJGBx67boUj9rnmGBx-0mFxKoYEqoZ8WwVTqrkGyNv6EhMR2X8moWEPzn8gDuYOm/exec',
+    GAS_WEB_APP_URL: localStorage.getItem('GAS_WEB_APP_URL') || 'https://script.google.com/macros/s/AKfycbzCDfLnYurbQVxtIR0UwJGDvkl99qVFlArIKcvLX7h0WmDIgTrsPxNhxv8vsg5X-lE/exec',
     
     // Google Form untuk upload berkas (opsional)
     GOOGLE_FORM_UPLOAD_URL: 'https://forms.gle/YOUR_FORM_ID',
