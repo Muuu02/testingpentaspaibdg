@@ -141,7 +141,6 @@ function saveStepData(step) {
         if (input.type === 'checkbox') {
             formData[input.name] = input.checked;
         }
-        // File tidak disimpan di sini, sudah ditangani previewFoto
     });
 }
 
@@ -168,6 +167,45 @@ function initLombaSelection() {
     if (preselectedLomba) {
         const option = document.querySelector(`.lomba-option[data-lomba="${preselectedLomba}"]`);
         if (option) option.click();
+    }
+}
+
+// ============================================
+// FETCH SEKOLAH DARI NPSN (DENGAN text/plain)
+// ============================================
+async function fetchSekolahByNPSN() {
+    const npsn = document.getElementById('npsnInput').value.trim();
+    if (!/^\d{8}$/.test(npsn)) {
+        showNotification('NPSN harus 8 digit angka', 'error');
+        return;
+    }
+    
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getSekolahByNPSN', npsn: npsn })
+        });
+        const result = await response.json();
+        
+        if (result.success && result.data) {
+            document.getElementById('namaSekolahInput').value = result.data.nama_sekolah || '';
+            document.getElementById('kecamatanInput').value = result.data.kecamatan || '';
+            document.getElementById('alamatSekolahInput').value = result.data.alamat_lengkap || '';
+            showNotification('Data sekolah ditemukan', 'success');
+        } else {
+            showNotification('NPSN tidak ditemukan. Silakan ajukan penambahan data.', 'warning');
+        }
+    } catch (error) {
+        console.error('Error fetch NPSN:', error);
+        showNotification('Gagal mengambil data sekolah', 'error');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-search"></i> Cek';
     }
 }
 
@@ -257,7 +295,6 @@ function renderDynamicPesertaForm() {
             </div>
         `;
         
-        // Khusus MTQ: pilihan maqro
         if (selectedLomba === 'mtq') {
             html += `
                 <div class="mb-4">
@@ -288,12 +325,10 @@ function renderDynamicPesertaForm() {
     
     container.innerHTML = html;
     
-    // Add copy functionality for LCCP
     if (selectedLomba === 'lccp') {
         addCopyFunctionality();
     }
     
-    // Add input formatting
     document.querySelectorAll('input[name^="nisn"]').forEach(input => {
         input.addEventListener('input', (e) => {
             e.target.value = e.target.value.replace(/\D/g, '').slice(0, 10);
@@ -392,12 +427,10 @@ function generateAnggotaCard(index, label, showGender, isRequired, showPeran = f
     `;
 }
 
-// Fungsi preview foto (global)
 function previewFoto(input, previewId) {
     const preview = document.getElementById(previewId);
     if (!preview) return;
     
-    // Ambil index dari previewId (misal "preview1" -> "1")
     const index = previewId.replace('preview', '');
     
     if (input.files && input.files[0]) {
@@ -405,7 +438,6 @@ function previewFoto(input, previewId) {
         reader.onload = function(e) {
             preview.src = e.target.result;
             preview.classList.remove('hidden');
-            // Simpan data URL ke formData agar bisa ditampilkan di resume
             formData[`fotoData${index}`] = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
@@ -416,9 +448,7 @@ function previewFoto(input, previewId) {
     }
 }
 
-function addCopyFunctionality() {
-    // Copy functionality is handled inline in generateAnggotaCard
-}
+function addCopyFunctionality() {}
 
 function copyFromFirst(targetIndex) {
     const fields = ['nama', 'ttl', 'jk', 'kelas'];
@@ -458,7 +488,6 @@ function renderResume() {
         html += `<p class="text-sm text-gray-300 mb-3">Gender: ${formData.genderGrup === 'L' ? 'Putra' : 'Putri'}</p>`;
     }
     
-    // Count peserta
     let pesertaCount = 1;
     if (selectedLomba === 'lccp' || selectedLomba === 'lpsb') pesertaCount = 3;
     else if (selectedLomba === 'lsqr') {
@@ -477,7 +506,6 @@ function renderResume() {
         const jk = formData[`jk${i}`] === 'L' ? 'Putra' : 'Putri';
         const peran = formData[`peran${i}`] ? ` (${formData[`peran${i}`]})` : '';
         
-        // Cek apakah ada foto
         let fotoHtml = '';
         if (formData[`fotoData${i}`]) {
             fotoHtml = `<img src="${formData[`fotoData${i}`]}" class="foto-preview mt-2" alt="Foto ${formData[`nama${i}`]}">`;
@@ -498,7 +526,7 @@ function renderResume() {
 }
 
 // ============================================
-// FORM SUBMISSION
+// FORM SUBMISSION (DENGAN text/plain)
 // ============================================
 
 async function handleFormSubmit(e) {
@@ -519,14 +547,11 @@ async function handleFormSubmit(e) {
         formData.id = pendaftaranId;
         formData.timestamp = new Date().toISOString();
         
-        // Prepare data for submission
         const submissionData = prepareSubmissionData();
         
-        // Submit to Google Apps Script
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'submitPendaftaran',
                 data: submissionData
@@ -552,7 +577,6 @@ async function handleFormSubmit(e) {
 function prepareSubmissionData() {
     const lombaData = LOMBA_DATA[selectedLomba];
     
-    // Collect peserta data
     const peserta = [];
     let maxPeserta = lombaData.jumlahPeserta || 1;
     if (selectedLomba === 'lsqr') maxPeserta = 11;
@@ -567,7 +591,8 @@ function prepareSubmissionData() {
                 jk: formData[`jk${i}`],
                 kelas: formData[`kelas${i}`],
                 peran: formData[`peran${i}`] || null,
-                fotoData: formData[`fotoData${i}`] || null  // Sertakan data URL foto
+                maqro: formData[`maqro`] || null,
+                statusWajib: i <= 9 ? 'WAJIB' : 'CADANGAN'
             });
         }
     }
@@ -577,28 +602,18 @@ function prepareSubmissionData() {
         timestamp: formData.timestamp,
         jenisLomba: selectedLomba,
         namaLomba: lombaData.nama,
-        
-        // Data Sekolah
-        namaSekolah: formData.namaSekolah,
         npsn: formData.npsn,
+        namaSekolah: formData.namaSekolah,
         kecamatan: formData.kecamatan,
         alamatSekolah: formData.alamatSekolah,
-        
-        // Data Pendamping
         namaPendamping: formData.namaPendamping,
         hpPendamping: formData.hpPendamping,
-        
-        // Data Grup/Regu
         namaRegu: formData.namaRegu || null,
         namaGrup: formData.namaGrup || null,
         genderGrup: formData.genderGrup || null,
         maqro: formData.maqro || null,
-        
-        // Data Peserta
         peserta: peserta,
         jumlahPeserta: peserta.length,
-        
-        // Metadata
         status: 'MENUNGGU_VERIFIKASI'
     };
 }
@@ -609,7 +624,6 @@ function showSuccessModal(id) {
     
     idEl.textContent = id;
     
-    // Generate QR Code
     const qrcodeContainer = document.getElementById('qrcode');
     qrcodeContainer.innerHTML = '';
     new QRCode(qrcodeContainer, {
@@ -620,13 +634,11 @@ function showSuccessModal(id) {
         colorLight: '#ffffff'
     });
     
-    // Fill bukti data
     document.getElementById('buktiLomba').textContent = LOMBA_DATA[selectedLomba].kode;
     document.getElementById('buktiKecamatan').textContent = formData.kecamatan;
     document.getElementById('buktiSekolah').textContent = formData.namaSekolah;
     
     modal.classList.remove('hidden');
-    
     localStorage.setItem('lastPendaftaranId', id);
 }
 
@@ -634,28 +646,12 @@ function printBukti() {
     const buktiContent = document.getElementById('buktiPendaftaran').innerHTML;
     const printWindow = window.open('', '_blank');
     printWindow.document.write(`
-        <html>
-        <head>
-            <title>Bukti Pendaftaran - PENTAS PAI 2026</title>
-            <script src="https://cdn.tailwindcss.com"><\/script>
-            <style>
-                @media print {
-                    body { padding: 20px; background: white; }
-                    .no-print { display: none; }
-                }
-            </style>
-        </head>
-        <body class="bg-white p-8">
-            <div class="max-w-md mx-auto border-2 border-emerald-200 rounded-xl p-6">
-                ${buktiContent}
-            </div>
-            <div class="text-center mt-4 no-print">
-                <button onclick="window.print()" class="px-6 py-3 bg-emerald-600 text-white rounded-lg">Print</button>
-            </div>
-        </body>
-        </html>
+        <html><head><title>Bukti Pendaftaran</title>
+        <script src="https://cdn.tailwindcss.com"><\/script></head>
+        <body class="bg-white p-8"><div class="max-w-md mx-auto">${buktiContent}</div></body></html>
     `);
     printWindow.document.close();
+    printWindow.print();
 }
 
 function shareWhatsApp() {
@@ -671,14 +667,10 @@ function shareWhatsApp() {
 
 document.addEventListener('DOMContentLoaded', () => {
     initLombaSelection();
-    
     form.addEventListener('submit', handleFormSubmit);
-    
     persetujuanCheckbox.addEventListener('change', () => {
         submitBtn.disabled = !persetujuanCheckbox.checked;
     });
-    
-    // Input formatting
     document.querySelector('input[name="npsn"]')?.addEventListener('input', (e) => {
         e.target.value = e.target.value.replace(/\D/g, '').slice(0, 8);
     });
