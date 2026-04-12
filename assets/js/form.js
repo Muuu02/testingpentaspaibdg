@@ -670,7 +670,8 @@ function prepareSubmissionData() {
                 kelas: formData[`kelas${i}`],
                 peran: formData[`peran${i}`] || null,
                 maqro: formData[`maqro`] || null,
-                statusWajib: i <= 9 ? 'WAJIB' : 'CADANGAN'
+                statusWajib: i <= 9 ? 'WAJIB' : 'CADANGAN',
+                fotoData: formData[`fotoData${i}`] || null   // ← tambahkan ini
             });
         }
     }
@@ -692,7 +693,7 @@ function prepareSubmissionData() {
         maqro: formData.maqro || null,
         peserta: peserta,
         jumlahPeserta: peserta.length,
-        berkas: formData.berkas || null,
+        berkas: formData.berkas || null,   // sudah ditambahkan sebelumnya
         status: 'MENUNGGU_VERIFIKASI'
     };
 }
