@@ -689,7 +689,118 @@ async function tambahAkun() {
         showNotification('Gagal menambah akun', 'error');
     }
 }
+// ============================================
+// KELOLA AKUN - LENGKAP
+// ============================================
 
+async function loadAkunList() {
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getAdminList' })
+        });
+        const result = await response.json();
+        if (result.success) {
+            renderAkunTable(result.data);
+        }
+    } catch (error) {
+        console.error('Gagal load akun:', error);
+    }
+}
+
+function renderAkunTable(akunList) {
+    const tbody = document.getElementById('akunTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = akunList.map(a => `
+        <tr>
+            <td class="px-3 py-2">${a.username}</td>
+            <td class="px-3 py-2">${a.nama_lengkap}</td>
+            <td class="px-3 py-2">${a.role}</td>
+            <td class="px-3 py-2">
+                <span class="status-badge ${a.status === 'aktif' ? 'status-terverifikasi' : 'status-ditolak'}">${a.status}</span>
+            </td>
+            <td class="px-3 py-2">
+                ${a.username !== 'admin' ? `
+                    <button onclick="toggleStatusAkun('${a.username}', '${a.status}')" class="text-amber-400 mr-2" title="Toggle Status">
+                        <i class="fas ${a.status === 'aktif' ? 'fa-ban' : 'fa-check'}"></i>
+                    </button>
+                    <button onclick="resetPasswordAdmin('${a.username}')" class="text-blue-400 mr-2" title="Reset Password">
+                        <i class="fas fa-key"></i>
+                    </button>
+                    <button onclick="hapusAkun('${a.username}')" class="text-red-400" title="Hapus">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                ` : '<span class="text-gray-500 text-xs">Default</span>'}
+            </td>
+        </tr>
+    `).join('');
+}
+
+async function toggleStatusAkun(username, currentStatus) {
+    const newStatus = currentStatus === 'aktif' ? 'nonaktif' : 'aktif';
+    if (!confirm(`Ubah status ${username} menjadi ${newStatus}?`)) return;
+    
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'updateAdminStatus', username, status: newStatus })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showNotification(`Status ${username} diubah`, 'success');
+            loadAkunList();
+        }
+    } catch (error) {
+        showNotification('Gagal mengubah status', 'error');
+    }
+}
+
+async function resetPasswordAdmin(username) {
+    const newPass = prompt(`Masukkan password baru untuk ${username}:`);
+    if (!newPass) return;
+    
+    const encoder = new TextEncoder();
+    const data = encoder.encode(newPass);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'resetAdminPassword', username, passwordHash })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showNotification(`Password ${username} direset`, 'success');
+        }
+    } catch (error) {
+        showNotification('Gagal reset password', 'error');
+    }
+}
+
+async function hapusAkun(username) {
+    if (!confirm(`Yakin hapus akun ${username}?`)) return;
+    
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'deleteAdmin', username })
+        });
+        const result = await response.json();
+        if (result.success) {
+            showNotification(`Akun ${username} dihapus`, 'success');
+            loadAkunList();
+        }
+    } catch (error) {
+        showNotification('Gagal menghapus akun', 'error');
+    }
+}
 // ============================================
 // NAVIGATION
 // ============================================
@@ -710,6 +821,8 @@ function showSection(section) {
     
     if (section === 'verifikasi') {
         renderVerifikasiList();
+        if (section === 'akun') {
+        loadAkunList();
     }
 }
 
