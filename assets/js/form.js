@@ -526,6 +526,75 @@ function renderResume() {
 }
 
 // ============================================
+// UPLOAD BERKAS KE DRIVE
+// ============================================
+
+/**
+ * Mengkonversi file ke Base64
+ */
+function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result.split(',')[1]);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+    });
+}
+
+/**
+ * Upload semua berkas persyaratan (Rapor, SK, Akta)
+ * @returns {Promise<Object>} - Object berisi URL/file ID
+ */
+async function uploadAllBerkas() {
+    const raporFile = document.getElementById('fileRapor').files[0];
+    const skFile = document.getElementById('fileSK').files[0];
+    const aktaFile = document.getElementById('fileAkta').files[0];
+    
+    // Validasi
+    if (!raporFile || !skFile || !aktaFile) {
+        throw new Error('Semua berkas wajib diunggah (Rapor, SK, Akta)');
+    }
+    
+    const maxSize = 2 * 1024 * 1024; // 2MB
+    if (raporFile.size > maxSize || skFile.size > maxSize || aktaFile.size > maxSize) {
+        throw new Error('Ukuran file maksimal 2MB');
+    }
+    
+    // Konversi ke Base64
+    const [raporBase64, skBase64, aktaBase64] = await Promise.all([
+        fileToBase64(raporFile),
+        fileToBase64(skFile),
+        fileToBase64(aktaFile)
+    ]);
+    
+    // Kirim ke Apps Script
+    const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({
+            action: 'uploadBerkas',
+            data: {
+                jenisLomba: selectedLomba,
+                npsn: formData.npsn,
+                namaSekolah: formData.namaSekolah,
+                files: {
+                    rapor: { name: raporFile.name, type: raporFile.type, data: raporBase64 },
+                    sk: { name: skFile.name, type: skFile.type, data: skBase64 },
+                    akta: { name: aktaFile.name, type: aktaFile.type, data: aktaBase64 }
+                }
+            }
+        })
+    });
+    
+    const result = await response.json();
+    if (!result.success) {
+        throw new Error(result.message || 'Gagal mengunggah berkas');
+    }
+    
+    return result.data; // { raporUrl, skUrl, aktaUrl }
+}
+
+// ============================================
 // FORM SUBMISSION (DENGAN text/plain)
 // ============================================
 
@@ -538,14 +607,22 @@ async function handleFormSubmit(e) {
     }
     
     const loadingOverlay = document.getElementById('loadingOverlay');
+    const uploadProgress = document.getElementById('uploadProgress');
+    
     loadingOverlay.classList.remove('hidden');
     
     try {
         saveStepData(4);
         
+        // Upload berkas dulu
+        uploadProgress.classList.remove('hidden');
+        const berkasUrls = await uploadAllBerkas();
+        uploadProgress.classList.add('hidden');
+        
         const pendaftaranId = generatePendaftaranID();
         formData.id = pendaftaranId;
         formData.timestamp = new Date().toISOString();
+        formData.berkas = berkasUrls; // Simpan URL berkas
         
         const submissionData = prepareSubmissionData();
         
@@ -567,10 +644,11 @@ async function handleFormSubmit(e) {
         }
         
     } catch (error) {
-        console.error('Error submitting form:', error);
+        console.error('Error:', error);
         showNotification('Terjadi kesalahan: ' + error.message, 'error');
     } finally {
         loadingOverlay.classList.add('hidden');
+        uploadProgress.classList.add('hidden');
     }
 }
 
