@@ -525,7 +525,8 @@ async function handleFormSubmit(e) {
         // Submit to Google Apps Script
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            redirect: 'follow',
             body: JSON.stringify({
                 action: 'submitPendaftaran',
                 data: submissionData
