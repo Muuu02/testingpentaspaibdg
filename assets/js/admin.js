@@ -844,14 +844,8 @@ function renderVerifikasiList() {
     `).join('') || '<p class="text-gray-400 text-center">Tidak ada pendaftaran menunggu verifikasi</p>';
 }
 
-// ============================================
-// START APP
-// ============================================
-
+// ========== START ==========
 document.addEventListener('DOMContentLoaded', () => {
-    if (currentUser) {
-        showMainApp();
-    } else {
-        window.location.href = 'login.html';
-    }
+    if (currentUser) showMainApp();
+    else window.location.href = 'login.html';
 });
