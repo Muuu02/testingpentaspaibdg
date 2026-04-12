@@ -282,34 +282,22 @@
         
         // Fetch data
         async function loadNomorUndian() {
-            const loading = document.getElementById('loadingState');
-            loading.classList.remove('hidden');
-            
-            try {
-                const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ action: 'getNomorUndian' })
-                });
-                const result = await response.json();
-                
-                if (result.success) {
-                    kecamatanList = result.kecamatan || [];
-                    nomorUndian = result.data || {};
-                    
-                    populateKecamatanFilter();
-                    renderAll();
-                } else {
-                    // Gunakan data dummy jika gagal
-                    useDummyData();
-                }
-            } catch (error) {
-                console.error('Error loading data:', error);
-                useDummyData();
-            } finally {
-                loading.classList.add('hidden');
-            }
+    try {
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'getNomorUndian' })
+        });
+        const result = await response.json();
+        if (result.success) {
+            NOMOR_URUT = result.data;
+            renderTable();
+            renderCards();
         }
+    } catch (error) {
+        console.error('Gagal load nomor undian:', error);
+    }
+}
         
         function useDummyData() {
             // Data dummy 30 kecamatan
