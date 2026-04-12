@@ -233,49 +233,32 @@
     <script src="../assets/js/main.js"></script>
     <script>
         async function checkStatus() {
-            const searchInput = document.getElementById('searchInput');
-            const searchValue = searchInput.value.trim();
-            
-            if (!searchValue) {
-                showNotification('Silakan masukkan ID Pendaftaran atau NISN', 'warning');
-                return;
-            }
-            
-            const loadingState = document.getElementById('loadingState');
-            const resultContainer = document.getElementById('resultContainer');
-            
-            loadingState.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
-            
-            try {
-                const isId = searchValue.toUpperCase().startsWith('PPAI-');
-                
-                const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'cekStatus',
-                        [isId ? 'id' : 'nisn']: searchValue
-                    })
-                });
-                
-                const result = await response.json();
-                
-                if (result.found) {
-                    displayStatus(result.data);
-                } else {
-                    displayNotFound();
-                }
-                
-            } catch (error) {
-                console.error('Error checking status:', error);
-                showNotification('Terjadi kesalahan saat mencari data. Pastikan koneksi internet stabil.', 'error');
-                // Tampilkan demo sebagai fallback
-                displayDemoStatus(searchValue);
-            } finally {
-                loadingState.classList.add('hidden');
-            }
-        }
+    const searchInput = document.getElementById('searchInput');
+    const searchValue = searchInput.value.trim();
+    if (!searchValue) { showNotification('Masukkan ID atau NISN', 'warning'); return; }
+    
+    const loadingState = document.getElementById('loadingState');
+    const resultContainer = document.getElementById('resultContainer');
+    loadingState.classList.remove('hidden');
+    resultContainer.classList.add('hidden');
+    
+    try {
+        const isId = searchValue.toUpperCase().startsWith('PPAI-');
+        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'cekStatus', [isId ? 'id' : 'nisn']: searchValue })
+        });
+        const result = await response.json();
+        if (result.found) { displayStatus(result.data); }
+        else { displayNotFound(); }
+    } catch (error) {
+        showNotification('Gagal terhubung', 'error');
+        displayDemoStatus(searchValue);
+    } finally {
+        loadingState.classList.add('hidden');
+    }
+}
         
         function displayStatus(data) {
             const container = document.getElementById('resultContainer');
