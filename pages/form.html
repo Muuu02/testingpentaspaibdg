@@ -418,21 +418,53 @@
                         </div>
                     </div>
                     
-                    <!-- Upload Berkas Persyaratan (Google Form / link) -->
-                    <div class="mb-6 p-4 rounded-xl border border-amber-500/30" style="background-color: #1e293b;">
-                        <h4 class="font-semibold text-amber-400 mb-3">
-                            <i class="fas fa-upload mr-2"></i>Upload Berkas Persyaratan
-                        </h4>
-                        <p class="text-sm text-gray-300 mb-3">
-                            Silakan upload berkas berikut melalui Google Form di bawah ini. Setelah selesai, kembali ke halaman ini dan lanjutkan.
-                        </p>
-                        <a href="https://forms.gle/contoh-link-upload-berkas" target="_blank" class="inline-flex items-center px-4 py-2 bg-amber-500 text-gray-900 rounded-lg font-semibold hover:bg-amber-400 transition touch-target">
-                            <i class="fas fa-external-link-alt mr-2"></i>Buka Form Upload Berkas
-                        </a>
-                        <p class="text-xs text-gray-400 mt-2">
-                            * Upload: Scan rapor, SK Juara, dan Pas Foto. Pastikan nama file sesuai dengan nama peserta.
-                        </p>
-                    </div>
+                    <!-- Upload Berkas Persyaratan (Langsung) -->
+<div class="mb-6 p-4 rounded-xl border border-amber-500/30" style="background-color: #1e293b;">
+    <h4 class="font-semibold text-amber-400 mb-3">
+        <i class="fas fa-upload mr-2"></i>Upload Berkas Persyaratan
+    </h4>
+    <p class="text-sm text-gray-300 mb-4">
+        Unggah masing-masing berkas sesuai ketentuan. Format: PDF/JPG/PNG, maks 2MB per file.
+    </p>
+    
+    <!-- Rapor -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-200 mb-2">
+            <i class="fas fa-file-alt mr-1"></i>Scan Rapor Terakhir <span class="text-red-400">*</span>
+        </label>
+        <input type="file" id="fileRapor" accept=".pdf,.jpg,.jpeg,.png" required
+            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+    </div>
+    
+    <!-- SK Juara -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-200 mb-2">
+            <i class="fas fa-trophy mr-1"></i>SK Juara 1 Tingkat Kecamatan <span class="text-red-400">*</span>
+        </label>
+        <input type="file" id="fileSK" accept=".pdf,.jpg,.jpeg,.png" required
+            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+    </div>
+    
+    <!-- Akta / KK -->
+    <div class="mb-4">
+        <label class="block text-sm font-medium text-gray-200 mb-2">
+            <i class="fas fa-id-card mr-1"></i>Akta Kelahiran / Kartu Keluarga <span class="text-red-400">*</span>
+        </label>
+        <input type="file" id="fileAkta" accept=".pdf,.jpg,.jpeg,.png" required
+            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+    </div>
+    
+    <!-- Progress Upload -->
+    <div id="uploadProgress" class="hidden mt-3">
+        <div class="flex items-center gap-2">
+            <div class="animate-spin rounded-full h-4 w-4 border-2 border-amber-400 border-t-transparent"></div>
+            <span class="text-sm text-gray-300">Mengunggah berkas...</span>
+        </div>
+    </div>
+</div>
                     
                     <!-- Form Dinamis -->
                     <div id="dynamicPesertaForm" class="space-y-4 md:space-y-6">
