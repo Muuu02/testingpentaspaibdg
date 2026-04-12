@@ -23,79 +23,35 @@ let sekolahList = [];
 let nomorUndianData = {};
 
 // ============================================
-// AUTHENTICATION
+// SESSION CHECK
 // ============================================
 
-async function handleLogin(e) {
-    e.preventDefault();
+(function checkSession() {
+    const adminUser = sessionStorage.getItem('adminUser');
+    const loginTime = sessionStorage.getItem('adminLoginTime');
     
-    const username = document.getElementById('username').value.trim();
-    const password = document.getElementById('password').value;
-    const loginBtn = document.getElementById('loginBtn');
-    const loginError = document.getElementById('loginError');
+    if (!adminUser || !loginTime) {
+        window.location.href = 'login.html';
+        return;
+    }
     
-    loginBtn.disabled = true;
-    loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Memverifikasi...';
+    const elapsed = Date.now() - parseInt(loginTime);
+    if (elapsed > 24 * 60 * 60 * 1000) {
+        sessionStorage.clear();
+        window.location.href = 'login.html';
+        return;
+    }
     
     try {
-        const passwordHash = await hashPassword(password);
-        
-        const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
-            body: JSON.stringify({
-                action: 'login',
-                username: username,
-                passwordHash: passwordHash
-            })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            currentUser = result.user;
-            showMainApp();
-        } else {
-            showLoginError(result.message || 'Username atau password salah');
-        }
-    } catch (error) {
-        console.error('Login error:', error);
-        showLoginError('Terjadi kesalahan. Silakan coba lagi.');
-    } finally {
-        loginBtn.disabled = false;
-        loginBtn.innerHTML = '<i class="fas fa-sign-in-alt mr-2"></i>Login';
+        currentUser = JSON.parse(adminUser);
+    } catch (e) {
+        window.location.href = 'login.html';
     }
-}
+})();
 
-async function hashPassword(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
-function showLoginError(message) {
-    const loginError = document.getElementById('loginError');
-    document.getElementById('loginErrorText').textContent = message;
-    loginError.classList.remove('hidden');
-}
-
-function togglePassword() {
-    const passwordInput = document.getElementById('password');
-    const toggleIcon = document.getElementById('toggleIcon');
-    
-    if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        toggleIcon.classList.remove('fa-eye');
-        toggleIcon.classList.add('fa-eye-slash');
-    } else {
-        passwordInput.type = 'password';
-        toggleIcon.classList.remove('fa-eye-slash');
-        toggleIcon.classList.add('fa-eye');
-    }
-}
+// ============================================
+// INITIALIZATION
+// ============================================
 
 function showMainApp() {
     document.getElementById('mainApp').classList.remove('hidden');
@@ -120,8 +76,8 @@ function getRoleLabel(role) {
 }
 
 function logout() {
-    currentUser = null;
-    location.reload();
+    sessionStorage.clear();
+    window.location.href = 'login.html';
 }
 
 function toggleSidebar() {
@@ -138,7 +94,6 @@ async function loadMasterData() {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({ action: 'getMasterData' })
         });
         const result = await response.json();
@@ -204,7 +159,6 @@ async function loadPendaftaranData() {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({ action: 'getAllData' })
         });
         const result = await response.json();
@@ -473,7 +427,6 @@ async function verifyData(id, status) {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'updateStatus',
                 id: id, status: status, catatan: catatan,
@@ -526,7 +479,6 @@ async function saveNomorUndian() {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'saveNomorUndian',
                 kecamatan, lomba, nomor: parseInt(nomor)
@@ -548,7 +500,6 @@ async function publishNomorUndian() {
         await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({ action: 'publishNomorUndian' })
         });
         showNotification('Nomor undian dipublikasikan', 'success');
@@ -592,7 +543,6 @@ async function saveSekolah() {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'saveSekolah',
                 npsn, nama_sekolah: nama, kecamatan, alamat_lengkap: alamat
@@ -620,7 +570,17 @@ function editSekolah(npsn) {
 
 async function deleteSekolah(npsn) {
     if (!confirm('Yakin hapus sekolah ini?')) return;
-    // Implementasi delete via GAS
+    try {
+        await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'deleteSekolah', npsn })
+        });
+        showNotification('Sekolah dihapus', 'success');
+        loadMasterData();
+    } catch (error) {
+        showNotification('Gagal menghapus', 'error');
+    }
 }
 
 // ============================================
@@ -635,7 +595,6 @@ async function toggleFormPendaftaran() {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'toggleForm',
                 status: !isActive
@@ -653,8 +612,16 @@ async function toggleFormPendaftaran() {
 
 async function saveWaAdmin() {
     const wa = document.getElementById('inputWaAdmin').value;
-    // Simpan ke CONFIG_SISTEM via GAS
-    showNotification('Nomor WA disimpan', 'success');
+    try {
+        await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify({ action: 'saveConfig', setting: 'whatsapp_admin', value: wa })
+        });
+        showNotification('Nomor WA disimpan', 'success');
+    } catch (error) {
+        showNotification('Gagal menyimpan', 'error');
+    }
 }
 
 // ============================================
@@ -695,13 +662,16 @@ async function tambahAkun() {
         return;
     }
     
-    const passwordHash = await hashPassword(password);
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const passwordHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
     try {
         const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            redirect: 'follow',
             body: JSON.stringify({
                 action: 'addAdmin',
                 username, passwordHash, nama_lengkap: nama, role
@@ -710,7 +680,10 @@ async function tambahAkun() {
         const result = await response.json();
         if (result.success) {
             showNotification('Akun ditambahkan', 'success');
-            // Clear form
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newNama').value = '';
+            document.getElementById('newPassword').value = '';
+            document.getElementById('newRole').value = '';
         }
     } catch (error) {
         showNotification('Gagal menambah akun', 'error');
@@ -758,37 +731,11 @@ function renderVerifikasiList() {
     `).join('') || '<p class="text-gray-400 text-center">Tidak ada pendaftaran menunggu verifikasi</p>';
 }
 
-// Cek session login
-(function checkSession() {
-    const adminUser = sessionStorage.getItem('adminUser');
-    const loginTime = sessionStorage.getItem('adminLoginTime');
-    
-    if (!adminUser || !loginTime) {
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    const elapsed = Date.now() - parseInt(loginTime);
-    if (elapsed > 24 * 60 * 60 * 1000) {
-        sessionStorage.clear();
-        window.location.href = 'login.html';
-        return;
-    }
-    
-    // Parse user data
-    try {
-        currentUser = JSON.parse(adminUser);
-    } catch (e) {
-        window.location.href = 'login.html';
-    }
-})();
-
 // ============================================
-// INITIALIZATION
+// START APP
 // ============================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Jika session valid, currentUser sudah terisi
     if (currentUser) {
         showMainApp();
     } else {
