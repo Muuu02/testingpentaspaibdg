@@ -700,10 +700,23 @@ function prepareSubmissionData() {
 function showSuccessModal(id) {
     const modal = document.getElementById('successModal');
     const idEl = document.getElementById('successId');
+    const lombaEl = document.getElementById('buktiLomba');
+    const kecEl = document.getElementById('buktiKecamatan');
+    const sekEl = document.getElementById('buktiSekolah');
+    const qrcodeContainer = document.getElementById('qrcode');
+    
+    // Cek apakah semua elemen ada
+    if (!modal || !idEl || !lombaEl || !kecEl || !sekEl || !qrcodeContainer) {
+        console.error('Elemen modal sukses tidak lengkap. Periksa form.html.');
+        console.log('Modal:', modal, 'ID:', idEl, 'Lomba:', lombaEl, 'Kec:', kecEl, 'Sek:', sekEl, 'QR:', qrcodeContainer);
+        return;
+    }
     
     idEl.textContent = id;
+    lombaEl.textContent = LOMBA_DATA[selectedLomba]?.kode || selectedLomba;
+    kecEl.textContent = formData.kecamatan || '-';
+    sekEl.textContent = formData.namaSekolah || '-';
     
-    const qrcodeContainer = document.getElementById('qrcode');
     qrcodeContainer.innerHTML = '';
     new QRCode(qrcodeContainer, {
         text: id,
@@ -713,24 +726,8 @@ function showSuccessModal(id) {
         colorLight: '#ffffff'
     });
     
-    document.getElementById('buktiLomba').textContent = LOMBA_DATA[selectedLomba].kode;
-    document.getElementById('buktiKecamatan').textContent = formData.kecamatan;
-    document.getElementById('buktiSekolah').textContent = formData.namaSekolah;
-    
     modal.classList.remove('hidden');
     localStorage.setItem('lastPendaftaranId', id);
-}
-
-function printBukti() {
-    const buktiContent = document.getElementById('buktiPendaftaran').innerHTML;
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write(`
-        <html><head><title>Bukti Pendaftaran</title>
-        <script src="https://cdn.tailwindcss.com"><\/script></head>
-        <body class="bg-white p-8"><div class="max-w-md mx-auto">${buktiContent}</div></body></html>
-    `);
-    printWindow.document.close();
-    printWindow.print();
 }
 
 function shareWhatsApp() {
