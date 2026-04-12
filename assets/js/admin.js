@@ -424,36 +424,6 @@ function closeDetailModal() {
 // DETAIL & VERIFICATION
 // ============================================
 
-function showDetail(id) {
-    const data = allData.find(d => d.id === id);
-    if (!data) return;
-    
-    const content = document.getElementById('detailContent');
-    content.innerHTML = `
-        <div class="grid md:grid-cols-2 gap-4">
-            <div><h4 class="font-bold text-emerald-400 mb-3">Informasi Pendaftaran</h4>
-                <div class="space-y-2"><div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">ID</span><span class="text-white">${data.id}</span></div>
-                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Status</span><span class="text-white">${getStatusLabel(data.status)}</span></div>
-                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Tanggal</span><span class="text-white">${formatTanggalIndonesia(data.timestamp)}</span></div>
-                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Lomba</span><span class="text-white">${data.jenisLomba}</span></div></div>
-            </div>
-            <div><h4 class="font-bold text-emerald-400 mb-3">Data Peserta</h4>
-                <div class="space-y-2"><div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Nama</span><span class="text-white">${data.namaPeserta}</span></div>
-                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Sekolah</span><span class="text-white">${data.namaSekolah}</span></div>
-                <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Kecamatan</span><span class="text-white">${data.kecamatan}</span></div></div>
-            </div>
-        </div>
-        ${canVerify() && data.status === 'MENUNGGU_VERIFIKASI' ? `
-            <div class="mt-6 flex gap-3">
-                <button onclick="verifyData('${data.id}', 'TERVERIFIKASI'); closeDetailModal();" class="flex-1 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button>
-                <button onclick="verifyData('${data.id}', 'DITOLAK'); closeDetailModal();" class="flex-1 py-2 bg-red-700 text-white rounded-lg">Tolak</button>
-            </div>
-        ` : ''}
-    `;
-    document.getElementById('detailModal').classList.remove('hidden');
-}
-function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
-
 async function verifyData(id, status) {
     if (!canVerify()) { showNotification('Tidak ada akses', 'error'); return; }
     const catatan = status === 'DITOLAK' ? prompt('Alasan penolakan:') : '';
