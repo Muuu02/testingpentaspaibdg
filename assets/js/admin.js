@@ -331,7 +331,7 @@ function showDetail(id) {
     const content = document.getElementById('detailContent');
     if (!modal || !content) return;
     
-    // Parse data_peserta_json (format: { peserta: [...], berkas: {...} })
+    // Parse data_peserta_json
     let pesertaList = [];
     let berkas = null;
     try {
@@ -341,11 +341,10 @@ function showDetail(id) {
         berkas = parsed.berkas || null;
     } catch (e) {
         console.error('Gagal parse data_peserta_json:', e);
-        pesertaList = [];
     }
     
     // HTML untuk setiap peserta (dengan foto)
-    const pesertaHtml = pesertaList.map((p, idx) => `
+    const pesertaHtml = pesertaList.map((p) => `
         <div class="border-b border-gray-600 pb-3 mb-3 last:border-0">
             <div class="flex items-start gap-3">
                 ${p.fotoData ? `
@@ -360,7 +359,6 @@ function showDetail(id) {
                     <p class="text-sm text-gray-300">NISN: ${p.nisn} | Kelas: ${p.kelas}</p>
                     <p class="text-sm text-gray-300">TTL: ${p.ttl || '-'}</p>
                     ${p.peran ? `<p class="text-sm text-amber-400"><i class="fas fa-user-tag mr-1"></i>Peran: ${p.peran}</p>` : ''}
-                    ${p.maqro ? `<p class="text-sm text-blue-400"><i class="fas fa-book-open mr-1"></i>Maqro: ${p.maqro}</p>` : ''}
                 </div>
             </div>
         </div>
@@ -369,114 +367,47 @@ function showDetail(id) {
     // HTML untuk berkas
     const berkasHtml = berkas ? `
         <div class="mt-4 p-4 bg-gray-800 rounded-lg border border-gray-600">
-            <h4 class="font-bold text-emerald-400 mb-3 text-lg"><i class="fas fa-paperclip mr-2"></i>Berkas Persyaratan</h4>
+            <h4 class="font-bold text-emerald-400 mb-3"><i class="fas fa-paperclip mr-2"></i>Berkas Persyaratan</h4>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                ${berkas.raporUrl ? `
-                    <a href="${berkas.raporUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
-                        <i class="fas fa-file-alt text-2xl text-blue-400 mr-3"></i>
-                        <span class="text-white">Rapor</span>
-                    </a>
-                ` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-file-alt text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">Rapor tidak tersedia</span></div>'}
-                
-                ${berkas.skUrl ? `
-                    <a href="${berkas.skUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
-                        <i class="fas fa-trophy text-2xl text-yellow-400 mr-3"></i>
-                        <span class="text-white">SK Juara</span>
-                    </a>
-                ` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-trophy text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">SK tidak tersedia</span></div>'}
-                
-                ${berkas.aktaUrl ? `
-                    <a href="${berkas.aktaUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600 transition">
-                        <i class="fas fa-id-card text-2xl text-green-400 mr-3"></i>
-                        <span class="text-white">Akta / KK</span>
-                    </a>
-                ` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-id-card text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">Akta/KK tidak tersedia</span></div>'}
+                ${berkas.raporUrl ? `<a href="${berkas.raporUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600"><i class="fas fa-file-alt text-2xl text-blue-400 mr-3"></i><span class="text-white">Rapor</span></a>` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-file-alt text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">Rapor tidak tersedia</span></div>'}
+                ${berkas.skUrl ? `<a href="${berkas.skUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600"><i class="fas fa-trophy text-2xl text-yellow-400 mr-3"></i><span class="text-white">SK Juara</span></a>` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-trophy text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">SK tidak tersedia</span></div>'}
+                ${berkas.aktaUrl ? `<a href="${berkas.aktaUrl}" target="_blank" class="flex items-center p-3 bg-gray-700 rounded-lg hover:bg-gray-600"><i class="fas fa-id-card text-2xl text-green-400 mr-3"></i><span class="text-white">Akta/KK</span></a>` : '<div class="flex items-center p-3 bg-gray-700 rounded-lg opacity-50"><i class="fas fa-id-card text-2xl text-gray-400 mr-3"></i><span class="text-gray-400">Akta/KK tidak tersedia</span></div>'}
             </div>
         </div>
     ` : '<p class="text-gray-400 mt-4 text-center italic">Tidak ada berkas diunggah.</p>';
     
-    // Bangun seluruh konten modal
+    // Gabungkan semua konten modal
     content.innerHTML = `
         <div class="grid md:grid-cols-2 gap-4">
             <div>
-                <h4 class="font-bold text-emerald-400 mb-3"><i class="fas fa-info-circle mr-2"></i>Informasi Pendaftaran</h4>
+                <h4 class="font-bold text-emerald-400 mb-3">Informasi Pendaftaran</h4>
                 <div class="space-y-2">
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">ID</span>
-                        <span class="text-white font-mono">${data.id}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Status</span>
-                        <span class="text-white">${getStatusLabel(data.status)}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Tanggal Daftar</span>
-                        <span class="text-white">${formatTanggalIndonesia(data.timestamp)}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Jenis Lomba</span>
-                        <span class="text-white">${data.namaLomba || data.jenisLomba}</span>
-                    </div>
-                    ${data.nomorUrut ? `
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Nomor Urut</span>
-                        <span class="text-white font-bold text-amber-400">${data.nomorUrut}</span>
-                    </div>
-                    ` : ''}
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">ID</span><span class="text-white font-mono">${data.id}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Status</span><span class="text-white">${getStatusLabel(data.status)}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Tanggal</span><span class="text-white">${formatTanggalIndonesia(data.timestamp)}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Lomba</span><span class="text-white">${data.namaLomba || data.jenisLomba}</span></div>
                 </div>
             </div>
             <div>
-                <h4 class="font-bold text-emerald-400 mb-3"><i class="fas fa-school mr-2"></i>Data Sekolah</h4>
+                <h4 class="font-bold text-emerald-400 mb-3">Data Sekolah</h4>
                 <div class="space-y-2">
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Sekolah</span>
-                        <span class="text-white">${data.namaSekolah}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">NPSN</span>
-                        <span class="text-white">${data.npsn}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Kecamatan</span>
-                        <span class="text-white">${data.kecamatan}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">Pendamping</span>
-                        <span class="text-white">${data.namaPendamping}</span>
-                    </div>
-                    <div class="flex justify-between border-b border-gray-600 pb-2">
-                        <span class="text-gray-400">HP Pendamping</span>
-                        <span class="text-white">${data.hpPendamping}</span>
-                    </div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Sekolah</span><span class="text-white">${data.namaSekolah}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">NPSN</span><span class="text-white">${data.npsn}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Kecamatan</span><span class="text-white">${data.kecamatan}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">Pendamping</span><span class="text-white">${data.namaPendamping}</span></div>
+                    <div class="flex justify-between border-b border-gray-600 pb-2"><span class="text-gray-400">HP</span><span class="text-white">${data.hpPendamping}</span></div>
                 </div>
             </div>
         </div>
-        
         <div class="mt-6">
-            <h4 class="font-bold text-emerald-400 mb-3 text-lg"><i class="fas fa-users mr-2"></i>Data Peserta (${pesertaList.length} orang)</h4>
-            <div class="max-h-80 overflow-y-auto pr-2 space-y-2">
-                ${pesertaHtml || '<p class="text-gray-400 text-center py-4">Tidak ada data peserta</p>'}
-            </div>
+            <h4 class="font-bold text-emerald-400 mb-3">Data Peserta (${pesertaList.length} orang)</h4>
+            <div class="max-h-80 overflow-y-auto pr-2">${pesertaHtml || '<p class="text-gray-400 text-center py-4">Tidak ada data peserta</p>'}</div>
         </div>
-        
         ${berkasHtml}
-        
-        ${data.catatan ? `
-        <div class="mt-4 p-4 bg-amber-900/30 border border-amber-600 rounded-lg">
-            <p class="text-amber-300"><i class="fas fa-sticky-note mr-2"></i>Catatan: ${data.catatan}</p>
-        </div>
-        ` : ''}
-        
         ${canVerify() && data.status === 'MENUNGGU_VERIFIKASI' ? `
             <div class="mt-6 flex gap-3">
-                <button onclick="verifyData('${data.id}', 'TERVERIFIKASI'); closeDetailModal();" 
-                    class="flex-1 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-600 transition">
-                    <i class="fas fa-check mr-2"></i>Verifikasi
-                </button>
-                <button onclick="verifyData('${data.id}', 'DITOLAK'); closeDetailModal();" 
-                    class="flex-1 py-2 bg-red-700 text-white rounded-lg hover:bg-red-600 transition">
-                    <i class="fas fa-times mr-2"></i>Tolak
-                </button>
+                <button onclick="verifyData('${data.id}', 'TERVERIFIKASI'); closeDetailModal();" class="flex-1 py-2 bg-emerald-700 text-white rounded-lg">Verifikasi</button>
+                <button onclick="verifyData('${data.id}', 'DITOLAK'); closeDetailModal();" class="flex-1 py-2 bg-red-700 text-white rounded-lg">Tolak</button>
             </div>
         ` : ''}
     `;
