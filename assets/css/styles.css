@@ -1,0 +1,474 @@
+/**
+ * ============================================================
+ * STYLES - PENTAS PAI KOTA BANDUNG 2026
+ * ============================================================
+ * CSS dengan dukungan Dark/Light Mode
+ * ============================================================
+ */
+
+/* ============================================
+   CSS VARIABLES - LIGHT MODE (DEFAULT)
+   ============================================ */
+:root {
+  /* Colors */
+  --primary: #059669;
+  --primary-dark: #047857;
+  --primary-light: #10b981;
+  --accent: #d4af37;
+  --accent-hover: #b8941f;
+  
+  /* Backgrounds */
+  --bg-body: #f3f4f6;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-hover: #ecfdf5;
+  --bg-hero: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+  
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #6b7280;
+  --text-on-dark: #ffffff;
+  --text-placeholder: #9ca3af;
+  
+  /* Borders */
+  --border-color: #e5e7eb;
+  --border-focus: #059669;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  
+  /* Status Colors */
+  --status-waiting-bg: #fef3c7;
+  --status-waiting-text: #92400e;
+  --status-verified-bg: #d1fae5;
+  --status-verified-text: #065f46;
+  --status-rejected-bg: #fee2e2;
+  --status-rejected-text: #991b1b;
+}
+
+/* ============================================
+   DARK MODE
+   ============================================ */
+[data-theme="dark"] {
+  /* Colors */
+  --primary: #10b981;
+  --primary-dark: #059669;
+  --primary-light: #34d399;
+  --accent: #fbbf24;
+  --accent-hover: #f59e0b;
+  
+  /* Backgrounds */
+  --bg-body: #111827;
+  --bg-card: #1f2937;
+  --bg-input: #374151;
+  --bg-hover: #064e3b;
+  --bg-hero: linear-gradient(135deg, #064e3b 0%, #065f46 50%, #047857 100%);
+  
+  /* Text */
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --text-on-dark: #ffffff;
+  --text-placeholder: #6b7280;
+  
+  /* Borders */
+  --border-color: #374151;
+  --border-focus: #10b981;
+  
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  
+  /* Status Colors */
+  --status-waiting-bg: #78350f;
+  --status-waiting-text: #fcd34d;
+  --status-verified-bg: #064e3b;
+  --status-verified-text: #6ee7b7;
+  --status-rejected-bg: #7f1d1d;
+  --status-rejected-text: #fca5a5;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+* {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ============================================
+   TYPOGRAPHY
+   ============================================ */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-primary);
+}
+
+p {
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   COMPONENTS
+   ============================================ */
+
+/* Cards */
+.card {
+  background-color: var(--bg-card);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-md);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* Buttons */
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Inputs */
+.input-field {
+  background-color: var(--bg-input);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.input-field:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+  outline: none;
+}
+
+.input-field::placeholder {
+  color: var(--text-placeholder);
+}
+
+/* Select */
+select {
+  background-color: var(--bg-input);
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+/* Hero Section */
+.hero-gradient {
+  background: var(--bg-hero);
+}
+
+/* Navbar */
+.navbar {
+  background-color: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+[data-theme="dark"] .navbar {
+  background-color: rgba(17, 24, 39, 0.95);
+}
+
+/* Status Badges */
+.status-waiting {
+  background-color: var(--status-waiting-bg);
+  color: var(--status-waiting-text);
+}
+
+.status-verified {
+  background-color: var(--status-verified-bg);
+  color: var(--status-verified-text);
+}
+
+.status-rejected {
+  background-color: var(--status-rejected-bg);
+  color: var(--status-rejected-text);
+}
+
+/* ============================================
+   FLOATING WHATSAPP BUTTON
+   ============================================ */
+.whatsapp-float {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background-color: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  z-index: 1000;
+  transition: all 0.3s ease;
+  animation: whatsapp-pulse 2s infinite;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+}
+
+.whatsapp-float i {
+  color: white;
+  font-size: 28px;
+}
+
+@keyframes whatsapp-pulse {
+  0%, 100% {
+    box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  }
+  50% {
+    box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7);
+  }
+}
+
+/* ============================================
+   DARK MODE TOGGLE
+   ============================================ */
+.mode-toggle {
+  position: relative;
+  width: 48px;
+  height: 24px;
+  background-color: var(--border-color);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mode-toggle.active {
+  background-color: var(--primary);
+}
+
+.mode-toggle-slider {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mode-toggle.active .mode-toggle-slider {
+  transform: translateX(24px);
+}
+
+.mode-toggle-slider i {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   FORM STEPS
+   ============================================ */
+.step-indicator {
+  transition: all 0.3s ease;
+}
+
+.step-indicator.active {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+  color: white;
+  transform: scale(1.1);
+}
+
+.step-indicator.completed {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* ============================================
+   LOMBA CARDS
+   ============================================ */
+.lomba-card {
+  background-color: var(--bg-card);
+  border: 2px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.lomba-card:hover {
+  border-color: var(--primary);
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-lg);
+}
+
+.lomba-card.selected {
+  border-color: var(--primary);
+  background-color: var(--bg-hover);
+}
+
+/* ============================================
+   LOADING OVERLAY
+   ============================================ */
+.loading-overlay {
+  backdrop-filter: blur(5px);
+}
+
+/* ============================================
+   TOUCH TARGETS (MOBILE)
+   ============================================ */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.form-step {
+  display: none;
+  animation: fadeIn 0.5s ease;
+}
+
+.form-step.active {
+  display: block;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .card {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .whatsapp-float {
+    width: 50px;
+    height: 50px;
+    bottom: 16px;
+    right: 16px;
+  }
+  
+  .whatsapp-float i {
+    font-size: 24px;
+  }
+}
+
+/* ============================================
+   PERBAIKAN KONTRAS DARK MODE (A2)
+   ============================================ */
+
+[data-theme="dark"] {
+  /* Placeholder lebih terang */
+  --text-placeholder: #9ca3af;
+  
+  /* Border lebih terlihat */
+  --border-color: #4b5563;
+  
+  /* Background input lebih gelap tapi kontras */
+  --bg-input: #1f2937;
+  
+  /* Fokus state lebih cerah */
+  --border-focus: #34d399;
+}
+
+/* Placeholder styling global */
+::placeholder {
+  color: var(--text-placeholder) !important;
+  opacity: 1 !important;
+}
+
+/* Untuk input dengan class .input-field */
+.input-field::placeholder {
+  color: var(--text-placeholder) !important;
+}
+
+/* Fokus state lebih jelas */
+.input-field:focus {
+  border-color: var(--border-focus) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2) !important;
+}
+
+[data-theme="dark"] .input-field:focus {
+  box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.3) !important;
+}
+
+/* Perbaikan kontras teks di card */
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-gray-50,
+[data-theme="dark"] .bg-emerald-50 {
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Link di dark mode */
+[data-theme="dark"] a:not(.btn-primary):not(.sidebar-link) {
+  color: #6ee7b7;
+}
+[data-theme="dark"] a:hover:not(.btn-primary) {
+  color: #a7f3d0;
+}
+
+/* Tabel di dark mode */
+[data-theme="dark"] table {
+  color: var(--text-primary);
+}
+[data-theme="dark"] th {
+  background-color: var(--primary-dark) !important;
+}
+[data-theme="dark"] tr:hover {
+  background-color: var(--bg-hover) !important;
+}

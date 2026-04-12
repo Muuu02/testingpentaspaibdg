@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PENTAS PAI KOTA BANDUNG 2026</title>
+    <meta name="description" content="Pekan Keterampilan dan Seni Pendidikan Agama Islam Tingkat Kota Bandung Tahun 2026">
+    
+    <!-- Google Fonts - Inter & Amiri -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'amiri': ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            200: '#a7f3d0',
+                            300: '#6ee7b7',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                            950: '#022c22',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* ============================================
+           DARK MODE ONLY - KONTRAS TINGGI
+           ============================================ */
+        * {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a; /* slate-900 */
+            color: #f1f5f9; /* slate-100 */
+        }
+        
+        .font-arabic {
+            font-family: 'Amiri', serif;
+        }
+        
+        .gradient-emerald {
+            background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%);
+        }
+        
+        .gold-gradient {
+            background: linear-gradient(135deg, #d4af37 0%, #f4e4a6 50%, #d4af37 100%);
+        }
+        
+        .pattern-bg {
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        
+        .countdown-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.4);
+        }
+        
+        .lomba-card {
+            background-color: #1e293b; /* slate-800 */
+            border: 1px solid #334155;
+            transition: all 0.3s ease;
+        }
+        
+        .lomba-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            border-color: #10b981;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            transition: all 0.3s ease;
+            color: #064e3b;
+            font-weight: 600;
+        }
+        
+        .btn-primary:hover {
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+        
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        .pulse-glow {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6); }
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 0;
+            width: 16px;
+            height: 16px;
+            background: #d4af37;
+            border-radius: 50%;
+            border: 3px solid #065f46;
+        }
+        
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease;
+        }
+        
+        .scroll-reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Touch target minimum 44px */
+        .touch-target {
+            min-height: 44px;
+            min-width: 44px;
+        }
+        
+        /* High contrast text */
+        .text-high-contrast {
+            color: #f1f5f9;
+        }
+        
+        .text-on-dark {
+            color: #ffffff;
+        }
+        
+        /* Placeholder styling */
+        ::placeholder {
+            color: #94a3b8;
+            opacity: 1;
+        }
+        
+        /* Focus states */
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #10b981;
+        }
+
+        /* ===== DARK MODE SPECIFIC OVERRIDES ===== */
+        /* Navbar */
+        nav {
+            background-color: rgba(30, 41, 59, 0.95) !important;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #334155;
+        }
+        
+        /* Semua background putih/terang diubah ke slate */
+        .bg-white, .bg-gray-100, .bg-gray-50, .bg-emerald-50 {
+            background-color: #1e293b !important;
+        }
+        
+        /* Teks */
+        h1, h2, h3, h4, h5, h6, p, span, a:not(.btn-primary):not(.text-white) {
+            color: #f1f5f9 !important;
+        }
+        
+        .text-gray-600, .text-gray-700, .text-gray-800, .text-gray-900 {
+            color: #cbd5e1 !important;
+        }
+        
+        .text-emerald-800, .text-emerald-700 {
+            color: #6ee7b7 !important;
+        }
+        
+        /* Card lomba */
+        .lomba-card {
+            background-color: #1e293b;
+            border: 1px solid #334155;
+        }
+        
+        /* Timeline */
+        .timeline-item .bg-emerald-50 {
+            background-color: #1e293b !important;
+            border: 1px solid #334155;
+        }
+        
+        /* Wave separator di hero */
+        section#beranda + div svg path {
+            fill: #0f172a !important;
+        }
+        
+        /* Navbar link hover */
+        nav a:not(.btn-primary):hover {
+            color: #34d399 !important;
+        }
+        
+        /* Mobile menu */
+        #mobileMenu {
+            background-color: #1e293b;
+            border-top: 1px solid #334155;
+        }
+        #mobileMenu a {
+            color: #f1f5f9;
+        }
+        #mobileMenu a:hover {
+            background-color: #065f46;
+        }
+        
+        /* Footer */
+        footer {
+            background-color: #022c22;
+            color: #f1f5f9;
+        }
+        
+        /* Modal content */
+        #lombaModal .bg-white {
+            background-color: #1e293b !important;
+        }
+        
+        /* Countdown box teks */
+        .countdown-box div:first-child {
+            color: white !important;
+        }
+    </style>
+</head>
+<body class="font-inter text-gray-100 antialiased">
+    <!-- Navigation -->
+    <nav class="fixed w-full z-50 shadow-lg transition-all duration-300" id="navbar">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 md:w-12 md:h-12 gradient-emerald rounded-full flex items-center justify-center">
+                        <i class="fas fa-mosque text-amber-400 text-lg md:text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-lg md:text-xl font-bold text-emerald-400">PENTAS PAI</h1>
+                        <p class="text-xs text-gray-300">KOTA BANDUNG 2026</p>
+                    </div>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-6">
+                    <a href="#beranda" class="text-gray-200 hover:text-emerald-400 font-medium transition py-2">Beranda</a>
+                    <a href="#lomba" class="text-gray-200 hover:text-emerald-400 font-medium transition py-2">Jenis Lomba</a>
+                    <a href="#timeline" class="text-gray-200 hover:text-emerald-400 font-medium transition py-2">Timeline</a>
+                    <a href="pages/form.html" class="btn-primary px-5 py-2.5 rounded-full text-white font-semibold text-sm">
+                        <i class="fas fa-edit mr-2"></i>Daftar
+                    </a>
+                </div>
+                
+                <button class="md:hidden text-gray-200 touch-target flex items-center justify-center" id="mobileMenuBtn" aria-label="Menu">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="md:hidden hidden" id="mobileMenu">
+            <div class="px-4 py-4 space-y-2">
+                <a href="#beranda" class="block py-3 px-2 touch-target">Beranda</a>
+                <a href="#lomba" class="block py-3 px-2 touch-target">Jenis Lomba</a>
+                <a href="#timeline" class="block py-3 px-2 touch-target">Timeline</a>
+                <a href="pages/hasil-techmeet.html" class="block py-3 px-2 touch-target">Nomor Peserta</a>
+                <a href="pages/form.html" class="block btn-primary px-6 py-3 rounded-full text-white text-center font-semibold mt-4">
+                    Daftar Sekarang
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="beranda" class="min-h-screen gradient-emerald pattern-bg pt-20 flex items-center relative overflow-hidden">
+        <!-- Decorative Elements -->
+        <div class="absolute top-20 left-10 w-64 h-64 bg-amber-400/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-amber-400/5 rounded-full blur-3xl"></div>
+        
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                <div class="text-white">
+                    <div class="inline-block px-4 py-2 bg-white/15 rounded-full mb-4 md:mb-6 border border-amber-400/40">
+                        <span class="text-amber-300 font-semibold text-sm">
+                            <i class="fas fa-star mr-2"></i>Pekan Keterampilan dan Seni PAI
+                        </span>
+                    </div>
+                    
+                    <h1 class="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight">
+                        PENTAS PAI<br>
+                        <span class="text-amber-300">KOTA BANDUNG</span><br>
+                        <span class="text-2xl md:text-4xl lg:text-5xl">2026</span>
+                    </h1>
+                    
+                    <p class="text-base md:text-lg text-gray-200 mb-6 md:mb-8 leading-relaxed max-w-xl">
+                        Wujudkan Generasi Beriman, Bertakwa, dan Berakhlak Mulia melalui Kompetisi Keagamaan Islam Tingkat Kota Bandung
+                    </p>
+                    
+                    <div class="flex flex-wrap gap-3 md:gap-4 mb-8 md:mb-10">
+                        <a href="pages/form.html" class="btn-primary px-6 md:px-8 py-3 md:py-4 rounded-full text-white font-bold text-sm md:text-base inline-flex items-center touch-target">
+                            <i class="fas fa-paper-plane mr-2 md:mr-3"></i>Daftar Sekarang
+                        </a>
+                        <a href="pages/status.html" class="px-6 md:px-8 py-3 md:py-4 rounded-full border-2 border-amber-400 text-amber-300 font-bold text-sm md:text-base hover:bg-amber-400 hover:text-emerald-900 transition inline-flex items-center touch-target">
+                            <i class="fas fa-search mr-2 md:mr-3"></i>Cek Status
+                        </a>
+                    </div>
+                    
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-3 gap-4 md:gap-6">
+                        <div class="text-center">
+                            <div class="text-2xl md:text-4xl font-bold text-amber-300">8</div>
+                            <div class="text-xs md:text-sm text-gray-300">Jenis Lomba</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl md:text-4xl font-bold text-amber-300">30</div>
+                            <div class="text-xs md:text-sm text-gray-300">Kecamatan</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl md:text-4xl font-bold text-amber-300">SD</div>
+                            <div class="text-xs md:text-sm text-gray-300">Kelas 3-5</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Countdown Section -->
+                <div class="flex justify-center">
+                    <div class="bg-white/10 backdrop-blur-lg rounded-2xl md:rounded-3xl p-6 md:p-8 border border-amber-400/30 w-full max-w-md">
+                        <h3 class="text-center text-amber-300 font-bold text-lg md:text-xl mb-4 md:mb-6">
+                            <i class="fas fa-clock mr-2"></i>Hitung Mundur Pelaksanaan
+                        </h3>
+                        
+                        <div class="grid grid-cols-4 gap-2 md:gap-4" id="countdown">
+                            <div class="countdown-box rounded-lg md:rounded-xl p-3 md:p-4 text-center">
+                                <div class="text-xl md:text-3xl lg:text-4xl font-bold text-white" id="days">00</div>
+                                <div class="text-xs text-gray-300">Hari</div>
+                            </div>
+                            <div class="countdown-box rounded-lg md:rounded-xl p-3 md:p-4 text-center">
+                                <div class="text-xl md:text-3xl lg:text-4xl font-bold text-white" id="hours">00</div>
+                                <div class="text-xs text-gray-300">Jam</div>
+                            </div>
+                            <div class="countdown-box rounded-lg md:rounded-xl p-3 md:p-4 text-center">
+                                <div class="text-xl md:text-3xl lg:text-4xl font-bold text-white" id="minutes">00</div>
+                                <div class="text-xs text-gray-300">Menit</div>
+                            </div>
+                            <div class="countdown-box rounded-lg md:rounded-xl p-3 md:p-4 text-center">
+                                <div class="text-xl md:text-3xl lg:text-4xl font-bold text-white" id="seconds">00</div>
+                                <div class="text-xs text-gray-300">Detik</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 md:mt-6 text-center">
+                            <p class="text-gray-300 text-sm">
+                                <i class="fas fa-calendar-alt mr-2 text-amber-300"></i>
+                                Mei - Juni 2026
+                            </p>
+                            <p class="text-gray-400 text-xs mt-1">
+                                *(Tanggal pasti akan diinformasikan)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Wave Separator (diubah ke dark) -->
+        <div class="absolute bottom-0 left-0 right-0">
+            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#0f172a"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Jenis Lomba Section -->
+    <section id="lomba" class="py-16 md:py-20" style="background-color: #0f172a;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 md:mb-16 scroll-reveal">
+                <div class="inline-block px-4 py-2 bg-emerald-900/50 rounded-full mb-4 border border-emerald-700">
+                    <span class="text-emerald-300 font-semibold text-sm">8 Cabang Lomba</span>
+                </div>
+                <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-100 mb-4">
+                    Jenis <span class="text-emerald-400">Lomba</span>
+                </h2>
+                <p class="text-gray-300 max-w-2xl mx-auto text-sm md:text-base">
+                    Pilih cabang lomba sesuai dengan bakat dan minat peserta didik. Setiap lomba memiliki kriteria penilaian yang berbeda.
+                </p>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+                <!-- LCCP -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-brain text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">Regu (3 org)</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LCC-PAI</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Cerdas Cermat Pendidikan Agama Islam</p>
+                        <button onclick="showLombaDetail('lccp')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LDC -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-microphone text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">1 orang</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LDC</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Da'i Cilik (Putra/Putri)</p>
+                        <button onclick="showLombaDetail('ldc')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- MTQ -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-book-quran text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">1 orang</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">MTQ</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Musabaqah Tilawatil Qur'an</p>
+                        <button onclick="showLombaDetail('mtq')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- MHQ -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-memory text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">1 orang</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">MHQ</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Musabaqah Hifzhul Qur'an</p>
+                        <button onclick="showLombaDetail('mhq')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LKI -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-pen-fancy text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">1 orang</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LKI</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Kaligrafi Islam</p>
+                        <button onclick="showLombaDetail('lki')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LPSB -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-praying-hands text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">3 org (2P+1W)</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LPSB</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Praktik Shalat Berjama'ah</p>
+                        <button onclick="showLombaDetail('lpsb')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LSQR -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-drum text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">9-11 org</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LSQR</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Seni Qasidah Rebana</p>
+                        <button onclick="showLombaDetail('lsqr')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- LPA -->
+                <div class="lomba-card rounded-xl md:rounded-2xl overflow-hidden shadow-md scroll-reveal">
+                    <div class="h-32 md:h-40 gradient-emerald flex items-center justify-center">
+                        <i class="fas fa-bullhorn text-5xl md:text-6xl text-amber-400"></i>
+                    </div>
+                    <div class="p-4 md:p-6">
+                        <div class="flex items-center justify-between mb-2 md:mb-3">
+                            <span class="px-2 md:px-3 py-1 bg-emerald-900/60 text-emerald-300 text-xs font-semibold rounded-full">1 Putra</span>
+                        </div>
+                        <h3 class="text-base md:text-lg font-bold text-gray-100 mb-1 md:mb-2">LPA</h3>
+                        <p class="text-gray-400 text-xs md:text-sm mb-3 md:mb-4">Lomba Praktik Adzan</p>
+                        <button onclick="showLombaDetail('lpa')" class="w-full py-2 border-2 border-emerald-600 text-emerald-400 rounded-lg font-semibold hover:bg-emerald-600 hover:text-white transition text-sm touch-target">
+                            Lihat Detail
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section id="timeline" class="py-16 md:py-20" style="background-color: #0f172a;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 md:mb-16 scroll-reveal">
+                <div class="inline-block px-4 py-2 bg-emerald-900/50 rounded-full mb-4 border border-emerald-700">
+                    <span class="text-emerald-300 font-semibold text-sm">Jadwal Pelaksanaan</span>
+                </div>
+                <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-100 mb-4">
+                    Timeline <span class="text-emerald-400">Kegiatan</span>
+                </h2>
+            </div>
+            
+            <div class="max-w-3xl mx-auto">
+                <div class="relative border-l-4 border-emerald-600 ml-4 md:ml-0 md:mx-auto space-y-6 md:space-y-8">
+                    <div class="timeline-item relative pl-6 md:pl-8 scroll-reveal">
+                        <div class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #334155;">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-base md:text-lg font-bold text-emerald-400">Pendaftaran Online</h3>
+                                <span class="px-3 py-1 bg-emerald-600 text-white text-xs font-semibold rounded-full">Segera</span>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base">Pendaftaran peserta melalui sistem online dengan mengisi formulir dan upload berkas persyaratan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item relative pl-6 md:pl-8 scroll-reveal">
+                        <div class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #334155;">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-base md:text-lg font-bold text-emerald-400">Technical Meeting</h3>
+                                <span class="px-3 py-1 bg-gray-600 text-white text-xs font-semibold rounded-full">Akan diinformasikan</span>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base">Pertemuan teknis bagi official dari masing-masing kecamatan</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item relative pl-6 md:pl-8 scroll-reveal">
+                        <div class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #334155;">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-base md:text-lg font-bold text-emerald-400">Pelaksanaan Lomba</h3>
+                                <span class="px-3 py-1 bg-gray-600 text-white text-xs font-semibold rounded-full">Mei - Juni 2026</span>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base">Pelaksanaan seluruh cabang lomba PENTAS PAI Kota Bandung 2026</p>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-item relative pl-6 md:pl-8 scroll-reveal">
+                        <div class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #334155;">
+                            <div class="flex items-center justify-between mb-2">
+                                <h3 class="text-base md:text-lg font-bold text-emerald-400">Pengumuman & Penghargaan</h3>
+                                <span class="px-3 py-1 bg-gray-600 text-white text-xs font-semibold rounded-full">Hari H</span>
+                            </div>
+                            <p class="text-gray-300 text-sm md:text-base">Pengumuman juara dan penyerahan trophy serta sertifikat</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Persyaratan Section -->
+    <section id="persyaratan" class="py-16 md:py-20" style="background-color: #0f172a;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 md:mb-16 scroll-reveal">
+                <div class="inline-block px-4 py-2 bg-emerald-900/50 rounded-full mb-4 border border-emerald-700">
+                    <span class="text-emerald-300 font-semibold text-sm">Ketentuan Peserta</span>
+                </div>
+                <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold text-gray-100 mb-4">
+                    Persyaratan <span class="text-emerald-400">Peserta</span>
+                </h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+                <div class="rounded-xl md:rounded-2xl p-6 md:p-8 shadow-md scroll-reveal" style="background-color: #1e293b; border: 1px solid #334155;">
+                    <div class="w-12 h-12 md:w-16 md:h-16 gradient-emerald rounded-full flex items-center justify-center mb-4 md:mb-6">
+                        <i class="fas fa-user-graduate text-xl md:text-2xl text-amber-400"></i>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-100 mb-4">Kriteria Peserta</h3>
+                    <ul class="space-y-3 text-gray-300 text-sm md:text-base">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Peserta didik SD kelas 3 s.d. 5 tahun ajaran 2025/2026</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Merupakan Juara 1 Pentas PAI Tingkat Kecamatan</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Tidak boleh merangkap lebih dari 1 mata lomba</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Didaftarkan oleh panitia/GPAI tingkat kecamatan</span>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="rounded-xl md:rounded-2xl p-6 md:p-8 shadow-md scroll-reveal" style="background-color: #1e293b; border: 1px solid #334155;">
+                    <div class="w-12 h-12 md:w-16 md:h-16 gradient-emerald rounded-full flex items-center justify-center mb-4 md:mb-6">
+                        <i class="fas fa-file-upload text-xl md:text-2xl text-amber-400"></i>
+                    </div>
+                    <h3 class="text-lg md:text-xl font-bold text-gray-100 mb-4">Berkas Pendaftaran</h3>
+                    <ul class="space-y-3 text-gray-300 text-sm md:text-base">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Biodata peserta lengkap</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Scan rapor terakhir</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>SK Juara 1 Pentas PAI Tingkat Kecamatan</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-emerald-500 mt-1 mr-3 flex-shrink-0"></i>
+                            <span>Pas foto berwarna terbaru</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 md:py-20 gradient-emerald pattern-bg">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-2xl md:text-4xl lg:text-5xl font-bold text-white mb-4 md:mb-6">
+                Siap Untuk Berkompetisi?
+            </h2>
+            <p class="text-base md:text-lg md:text-xl text-gray-200 mb-8 md:mb-10">
+                Daftarkan segera peserta terbaik dari kecamatan Anda dan raih prestasi di PENTAS PAI Kota Bandung 2026
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 md:gap-4">
+                <a href="pages/form.html" class="btn-primary px-8 md:px-10 py-3 md:py-4 rounded-full text-white font-bold text-sm md:text-lg inline-flex items-center pulse-glow touch-target">
+                    <i class="fas fa-paper-plane mr-2 md:mr-3"></i>Daftar Sekarang
+                </a>
+                <a href="pages/hasil-techmeet.html" class="px-6 md:px-8 py-3 md:py-4 rounded-full border-2 border-amber-400 text-amber-300 font-bold text-sm md:text-base hover:bg-amber-400 hover:text-emerald-900 transition inline-flex items-center touch-target">
+                    <i class="fas fa-list-ol mr-2 md:mr-3"></i>Nomor Peserta
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-white py-12" style="background-color: #022c22;">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center space-x-3 mb-4">
+                        <div class="w-10 h-10 md:w-12 md:h-12 bg-emerald-800 rounded-full flex items-center justify-center">
+                            <i class="fas fa-mosque text-amber-400 text-lg md:text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-base md:text-lg font-bold">PENTAS PAI</h3>
+                            <p class="text-xs text-gray-400">KOTA BANDUNG 2026</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-400 text-xs md:text-sm">
+                        Pekan Keterampilan dan Seni Pendidikan Agama Islam Tingkat Kota Bandung
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="text-base md:text-lg font-bold mb-4 text-amber-400">Tautan Cepat</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="#beranda" class="hover:text-amber-400 transition">Beranda</a></li>
+                        <li><a href="#lomba" class="hover:text-amber-400 transition">Jenis Lomba</a></li>
+                        <li><a href="#timeline" class="hover:text-amber-400 transition">Timeline</a></li>
+                        <li><a href="pages/hasil-techmeet.html" class="hover:text-amber-400 transition">Nomor Peserta</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-base md:text-lg font-bold mb-4 text-amber-400">Layanan</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="pages/form.html" class="hover:text-amber-400 transition">Pendaftaran</a></li>
+                        <li><a href="pages/status.html" class="hover:text-amber-400 transition">Cek Status</a></li>
+                        <li><a href="pages/admin.html" class="hover:text-amber-400 transition">Admin Panel</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-base md:text-lg font-bold mb-4 text-amber-400">Kontak</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><i class="fas fa-map-marker-alt mr-2"></i>Kota Bandung</li>
+                        <li><i class="fas fa-envelope mr-2"></i>panitia@pentaspai.bdg</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-emerald-800 mt-8 pt-8 text-center">
+                <p class="text-gray-400 text-xs md:text-sm">
+                    © 2026 PENTAS PAI Kota Bandung. Dibuat dengan <i class="fas fa-heart text-red-500"></i> untuk generasi berakhlak mulia.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lomba Detail Modal (sudah disesuaikan background) -->
+    <div id="lombaModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 bg-black/70" onclick="closeLombaModal()"></div>
+        <div class="absolute inset-4 md:inset-10 rounded-2xl overflow-hidden flex flex-col max-w-4xl mx-auto" style="background-color: #1e293b;">
+            <div class="gradient-emerald p-4 md:p-6 flex justify-between items-center">
+                <h3 id="modalTitle" class="text-lg md:text-2xl font-bold text-white">Detail Lomba</h3>
+                <button onclick="closeLombaModal()" class="text-white hover:text-amber-400 transition touch-target w-10 h-10 flex items-center justify-center">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto p-4 md:p-6 text-gray-200" id="modalContent">
+                <!-- Content will be loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script src="assets/js/main.js"></script>
+    <script src="assets/js/countdown.js"></script>
+</body>
+</html>
