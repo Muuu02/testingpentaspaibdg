@@ -184,10 +184,10 @@
             try {
                 const passwordHash = await hashPassword(password);
                 
+                // Gunakan Content-Type: text/plain untuk menghindari CORS preflight
                 const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    redirect: 'follow',
                     body: JSON.stringify({
                         action: 'login',
                         username: username,
