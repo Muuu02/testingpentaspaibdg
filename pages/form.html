@@ -562,9 +562,43 @@
                 <p class="text-gray-300 text-sm md:text-base mb-4">Data pendaftaran Anda telah tersimpan.</p>
                 
                 <!-- Bukti Pendaftaran Card -->
-                <div id="buktiPendaftaran" class="rounded-xl p-4 md:p-6 mb-4 text-left border-2 border-emerald-500" style="background-color: #0f172a;">
-                    <!-- Sama seperti sebelumnya, bisa disesuaikan -->
-                </div>
+<div id="buktiPendaftaran" class="rounded-xl p-4 md:p-6 mb-4 text-left border-2 border-emerald-500" style="background-color: #0f172a;">
+    <div class="text-center mb-4">
+        <div class="flex items-center justify-center mb-2">
+            <i class="fas fa-mosque text-emerald-400 text-2xl mr-2"></i>
+            <span class="font-bold text-emerald-400">PENTAS PAI 2026</span>
+        </div>
+        <p class="text-xs text-gray-400">Kota Bandung</p>
+    </div>
+    
+    <div class="text-center mb-4">
+        <p class="text-xs text-gray-400 mb-1">ID Pendaftaran</p>
+        <p class="text-xl md:text-2xl font-bold text-emerald-400" id="successId">-</p>
+    </div>
+    
+    <div class="flex justify-center mb-4">
+        <div id="qrcode"></div>
+    </div>
+    
+    <div class="space-y-2 text-sm">
+        <div class="flex justify-between">
+            <span class="text-gray-400">Mata Lomba:</span>
+            <span class="font-semibold text-white" id="buktiLomba">-</span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-gray-400">Kecamatan:</span>
+            <span class="font-semibold text-white" id="buktiKecamatan">-</span>
+        </div>
+        <div class="flex justify-between">
+            <span class="text-gray-400">Sekolah:</span>
+            <span class="font-semibold text-white" id="buktiSekolah">-</span>
+        </div>
+    </div>
+    
+    <div class="mt-4 pt-4 border-t border-gray-600 text-center">
+        <p class="text-xs text-gray-400">Simpan bukti ini. Verifikasi 1-2 hari kerja.</p>
+    </div>
+</div>
                 
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-3">
