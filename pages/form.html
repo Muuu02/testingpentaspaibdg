@@ -139,6 +139,17 @@
             border: 2px solid #10b981;
             background: #1e293b;
         }
+
+        /* Tombol kembali ke atas */
+        #btnScrollTop {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        #btnScrollTop.hidden {
+            display: none !important;
+        }
+        #btnScrollTop.flex {
+            display: flex !important;
+        }
     </style>
 </head>
 <body class="font-inter antialiased">
@@ -418,53 +429,59 @@
                         </div>
                     </div>
                     
-                    <!-- Upload Berkas Persyaratan (Langsung) -->
-<div class="mb-6 p-4 rounded-xl border border-amber-500/30" style="background-color: #1e293b;">
-    <h4 class="font-semibold text-amber-400 mb-3">
-        <i class="fas fa-upload mr-2"></i>Upload Berkas Persyaratan
-    </h4>
-    <p class="text-sm text-gray-300 mb-4">
-        Unggah masing-masing berkas sesuai ketentuan. Format: PDF/JPG/PNG, maks 2MB per file.
-    </p>
-    
-    <!-- Rapor -->
-    <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-200 mb-2">
-            <i class="fas fa-file-alt mr-1"></i>Scan Rapor Terakhir <span class="text-red-400">*</span>
-        </label>
-        <input type="file" id="fileRapor" accept=".pdf,.jpg,.jpeg,.png" required
-            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
-        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
-    </div>
-    
-    <!-- SK Juara -->
-    <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-200 mb-2">
-            <i class="fas fa-trophy mr-1"></i>SK Juara 1 Tingkat Kecamatan <span class="text-red-400">*</span>
-        </label>
-        <input type="file" id="fileSK" accept=".pdf,.jpg,.jpeg,.png" required
-            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
-        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
-    </div>
-    
-    <!-- Akta / KK -->
-    <div class="mb-4">
-        <label class="block text-sm font-medium text-gray-200 mb-2">
-            <i class="fas fa-id-card mr-1"></i>Akta Kelahiran / Kartu Keluarga <span class="text-red-400">*</span>
-        </label>
-        <input type="file" id="fileAkta" accept=".pdf,.jpg,.jpeg,.png" required
-            class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
-        <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
-    </div>
-    
-    <!-- Progress Upload -->
-    <div id="uploadProgress" class="hidden mt-3">
-        <div class="flex items-center gap-2">
-            <div class="animate-spin rounded-full h-4 w-4 border-2 border-amber-400 border-t-transparent"></div>
-            <span class="text-sm text-gray-300">Mengunggah berkas...</span>
-        </div>
-    </div>
-</div>
+                    <!-- Upload Berkas Persyaratan (Langsung) dengan Preview -->
+                    <div class="mb-6 p-4 rounded-xl border border-amber-500/30" style="background-color: #1e293b;">
+                        <h4 class="font-semibold text-amber-400 mb-3">
+                            <i class="fas fa-upload mr-2"></i>Upload Berkas Persyaratan
+                        </h4>
+                        <p class="text-sm text-gray-300 mb-4">
+                            Unggah masing-masing berkas sesuai ketentuan. Format: PDF/JPG/PNG, maks 2MB per file.
+                        </p>
+                        
+                        <!-- Rapor -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-200 mb-2">
+                                <i class="fas fa-file-alt mr-1"></i>Scan Rapor Terakhir <span class="text-red-400">*</span>
+                            </label>
+                            <input type="file" id="fileRapor" accept=".pdf,.jpg,.jpeg,.png" required
+                                onchange="if(validateFileSize(this)) { previewFile(this, 'previewRapor'); simpanBase64(this, 'raporBase64'); }"
+                                class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+                            <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+                            <img id="previewRapor" class="foto-preview mt-2 hidden" src="#" alt="Preview Rapor">
+                        </div>
+                        
+                        <!-- SK Juara -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-200 mb-2">
+                                <i class="fas fa-trophy mr-1"></i>SK Juara 1 Tingkat Kecamatan <span class="text-red-400">*</span>
+                            </label>
+                            <input type="file" id="fileSK" accept=".pdf,.jpg,.jpeg,.png" required
+                                onchange="if(validateFileSize(this)) { previewFile(this, 'previewSK'); simpanBase64(this, 'skBase64'); }"
+                                class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+                            <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+                            <img id="previewSK" class="foto-preview mt-2 hidden" src="#" alt="Preview SK">
+                        </div>
+                        
+                        <!-- Akta / KK -->
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium text-gray-200 mb-2">
+                                <i class="fas fa-id-card mr-1"></i>Akta Kelahiran / Kartu Keluarga <span class="text-red-400">*</span>
+                            </label>
+                            <input type="file" id="fileAkta" accept=".pdf,.jpg,.jpeg,.png" required
+                                onchange="if(validateFileSize(this)) { previewFile(this, 'previewAkta'); simpanBase64(this, 'aktaBase64'); }"
+                                class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+                            <p class="text-xs text-gray-400 mt-1">PDF/JPG/PNG, maks 2MB</p>
+                            <img id="previewAkta" class="foto-preview mt-2 hidden" src="#" alt="Preview Akta">
+                        </div>
+                        
+                        <!-- Progress Upload -->
+                        <div id="uploadProgress" class="hidden mt-3">
+                            <div class="flex items-center gap-2">
+                                <div class="animate-spin rounded-full h-4 w-4 border-2 border-amber-400 border-t-transparent"></div>
+                                <span class="text-sm text-gray-300">Mengunggah berkas...</span>
+                            </div>
+                        </div>
+                    </div>
                     
                     <!-- Form Dinamis -->
                     <div id="dynamicPesertaForm" class="space-y-4 md:space-y-6">
@@ -562,43 +579,43 @@
                 <p class="text-gray-300 text-sm md:text-base mb-4">Data pendaftaran Anda telah tersimpan.</p>
                 
                 <!-- Bukti Pendaftaran Card -->
-<div id="buktiPendaftaran" class="rounded-xl p-4 md:p-6 mb-4 text-left border-2 border-emerald-500" style="background-color: #0f172a;">
-    <div class="text-center mb-4">
-        <div class="flex items-center justify-center mb-2">
-            <i class="fas fa-mosque text-emerald-400 text-2xl mr-2"></i>
-            <span class="font-bold text-emerald-400">PENTAS PAI 2026</span>
-        </div>
-        <p class="text-xs text-gray-400">Kota Bandung</p>
-    </div>
-    
-    <div class="text-center mb-4">
-        <p class="text-xs text-gray-400 mb-1">ID Pendaftaran</p>
-        <p class="text-xl md:text-2xl font-bold text-emerald-400" id="successId">-</p>
-    </div>
-    
-    <div class="flex justify-center mb-4">
-        <div id="qrcode"></div>
-    </div>
-    
-    <div class="space-y-2 text-sm">
-        <div class="flex justify-between">
-            <span class="text-gray-400">Mata Lomba:</span>
-            <span class="font-semibold text-white" id="buktiLomba">-</span>
-        </div>
-        <div class="flex justify-between">
-            <span class="text-gray-400">Kecamatan:</span>
-            <span class="font-semibold text-white" id="buktiKecamatan">-</span>
-        </div>
-        <div class="flex justify-between">
-            <span class="text-gray-400">Sekolah:</span>
-            <span class="font-semibold text-white" id="buktiSekolah">-</span>
-        </div>
-    </div>
-    
-    <div class="mt-4 pt-4 border-t border-gray-600 text-center">
-        <p class="text-xs text-gray-400">Simpan bukti ini. Verifikasi 1-2 hari kerja.</p>
-    </div>
-</div>
+                <div id="buktiPendaftaran" class="rounded-xl p-4 md:p-6 mb-4 text-left border-2 border-emerald-500" style="background-color: #0f172a;">
+                    <div class="text-center mb-4">
+                        <div class="flex items-center justify-center mb-2">
+                            <i class="fas fa-mosque text-emerald-400 text-2xl mr-2"></i>
+                            <span class="font-bold text-emerald-400">PENTAS PAI 2026</span>
+                        </div>
+                        <p class="text-xs text-gray-400">Kota Bandung</p>
+                    </div>
+                    
+                    <div class="text-center mb-4">
+                        <p class="text-xs text-gray-400 mb-1">ID Pendaftaran</p>
+                        <p class="text-xl md:text-2xl font-bold text-emerald-400" id="successId">-</p>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div id="qrcode"></div>
+                    </div>
+                    
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Mata Lomba:</span>
+                            <span class="font-semibold text-white" id="buktiLomba">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Kecamatan:</span>
+                            <span class="font-semibold text-white" id="buktiKecamatan">-</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Sekolah:</span>
+                            <span class="font-semibold text-white" id="buktiSekolah">-</span>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-gray-600 text-center">
+                        <p class="text-xs text-gray-400">Simpan bukti ini. Verifikasi 1-2 hari kerja.</p>
+                    </div>
+                </div>
                 
                 <!-- Action Buttons -->
                 <div class="grid grid-cols-2 gap-3">
@@ -621,52 +638,12 @@
         </div>
     </div>
 
+    <!-- Tombol Kembali ke Atas -->
+    <button id="btnScrollTop" class="fixed bottom-24 right-6 w-12 h-12 bg-emerald-600 text-white rounded-full shadow-lg hidden items-center justify-center hover:bg-emerald-500 transition z-30">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
     <script src="../assets/js/main.js"></script>
     <script src="../assets/js/form.js"></script>
-    <!-- Tambahan script untuk auto-fetch NPSN -->
-    <script>
-        // Fungsi fetch data sekolah dari NPSN (dipanggil via onclick)
-        async function fetchSekolahByNPSN() {
-            const npsn = document.getElementById('npsnInput').value.trim();
-            if (!/^\d{8}$/.test(npsn)) {
-                showNotification('NPSN harus 8 digit angka', 'error');
-                return;
-            }
-            
-            const btn = event.target;
-            btn.disabled = true;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-            
-            try {
-                // Panggil Google Apps Script
-                const response = await fetch(CONFIG.GAS_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    redirect: 'follow',
-                    body: JSON.stringify({ action: 'getSekolahByNPSN', npsn: npsn })
-                });
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    document.getElementById('namaSekolahInput').value = result.data.nama_sekolah || '';
-                    document.getElementById('kecamatanInput').value = result.data.kecamatan || '';
-                    document.getElementById('alamatSekolahInput').value = result.data.alamat_lengkap || '';
-                    showNotification('Data sekolah ditemukan', 'success');
-                } else {
-                    showNotification('NPSN tidak ditemukan. Silakan ajukan penambahan data.', 'warning');
-                }
-            } catch (error) {
-                console.error('Error fetch NPSN:', error);
-                showNotification('Gagal mengambil data sekolah', 'error');
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-search"></i> Cek';
-            }
-        }
-    </script>
-    <!-- Tombol Kembali ke Atas -->
-<button id="btnScrollTop" class="fixed bottom-24 right-6 w-12 h-12 bg-emerald-600 text-white rounded-full shadow-lg hidden items-center justify-center hover:bg-emerald-500 transition z-30">
-    <i class="fas fa-arrow-up"></i>
-</button>
 </body>
 </html>
