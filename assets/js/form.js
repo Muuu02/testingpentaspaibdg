@@ -427,24 +427,38 @@ function generateAnggotaCard(index, label, showGender, isRequired, showPeran = f
     `;
 }
 
-function previewFoto(input, previewId) {
+function validateFileSize(input, maxSizeMB = 2) {
+    const file = input.files[0];
+    if (!file) return true;
+    const maxSize = maxSizeMB * 1024 * 1024;
+    if (file.size > maxSize) {
+        showNotification(`Ukuran file maksimal ${maxSizeMB}MB`, 'error');
+        input.value = '';
+        return false;
+    }
+    return true;
+}
+
+function previewFile(input, previewId) {
+    const file = input.files[0];
     const preview = document.getElementById(previewId);
     if (!preview) return;
-    
-    const index = previewId.replace('preview', '');
-    
-    if (input.files && input.files[0]) {
+    if (!file) {
+        preview.classList.add('hidden');
+        preview.src = '#';
+        return;
+    }
+    if (file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = function(e) {
+        reader.onload = (e) => {
             preview.src = e.target.result;
             preview.classList.remove('hidden');
-            formData[`fotoData${index}`] = e.target.result;
         };
-        reader.readAsDataURL(input.files[0]);
+        reader.readAsDataURL(file);
     } else {
-        preview.src = '#';
-        preview.classList.add('hidden');
-        formData[`fotoData${index}`] = null;
+        // Tampilkan ikon file generik
+        preview.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 384 512\'%3E%3Cpath fill=\'%23ef4444\' d=\'M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0z\'/%3E%3C/svg%3E';
+        preview.classList.remove('hidden');
     }
 }
 
