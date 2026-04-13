@@ -417,8 +417,8 @@ function generateAnggotaCard(index, label, showGender, isRequired, showPeran = f
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-gray-200 mb-2">Upload Foto ${requiredMark}</label>
                     <input type="file" name="foto${index}" id="fotoInput${index}" ${requiredAttr} accept="image/*" 
-                        onchange="previewFoto(this, 'preview${index}')"
-                        class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
+    onchange="if(validateFileSize(this)) previewFile(this, 'preview${index}')"
+    class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
                     <p class="text-xs text-gray-400 mt-1">Format: JPG/PNG, max 2MB</p>
                     <img id="preview${index}" class="foto-preview mt-2 hidden" src="#" alt="Preview Foto">
                 </div>
