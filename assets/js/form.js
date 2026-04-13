@@ -286,7 +286,7 @@ function renderDynamicPesertaForm() {
         infoJumlah.textContent = '1 orang';
         html += `
             <div class="mb-4">
-                <label class="block text-sm font-semibold text-gray-200 mb-2">Jenis Kelamin <span class="text-red-400">*</span></label>
+                <label class="block text-sm font-semibold text-gray-200 mb-2">Kategori Lomba <span class="text-red-400">*</span></label>
                 <select name="jenisKelamin" required class="input-field w-full px-4 py-3 rounded-xl">
                     <option value="">Pilih</option>
                     <option value="L">Putra</option>
