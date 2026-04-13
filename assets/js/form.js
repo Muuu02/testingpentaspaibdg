@@ -110,26 +110,39 @@ function validateFileSize(input, maxSizeMB = 2) {
     return true;
 }
 
-function previewFile(input, previewId) {
-    const file = input.files[0];
-    const preview = document.getElementById(previewId);
-    if (!preview) return;
-    if (!file) {
-        preview.classList.add('hidden');
-        preview.src = '#';
+// Fungsi untuk menangani preview file (gambar atau ikon PDF) dan menyimpan Base64
+function handleFileUpload(input, previewId, storageKey) {
+    if (!validateFileSize(input)) {
+        if (previewId) {
+            const preview = document.getElementById(previewId);
+            if (preview) preview.classList.add('hidden');
+        }
         return;
     }
-    if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            preview.src = e.target.result;
+
+    const file = input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        // Simpan Base64 ke formData
+        if (storageKey) {
+            formData[storageKey] = e.target.result;
+        }
+        // Tampilkan preview jika ada previewId
+        if (previewId) {
+            const preview = document.getElementById(previewId);
+            if (!preview) return;
+            if (file.type.startsWith('image/')) {
+                preview.src = e.target.result;
+            } else {
+                // Ikon PDF generik
+                preview.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 384 512\'%3E%3Cpath fill=\'%23ef4444\' d=\'M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0z\'/%3E%3C/svg%3E';
+            }
             preview.classList.remove('hidden');
-        };
-        reader.readAsDataURL(file);
-    } else {
-        preview.src = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 384 512\'%3E%3Cpath fill=\'%23ef4444\' d=\'M64 0C28.7 0 0 28.7 0 64L0 448c0 35.3 28.7 64 64 64l256 0c35.3 0 64-28.7 64-64l0-288-128 0c-17.7 0-32-14.3-32-32L224 0 64 0zM256 0l0 128 128 0L256 0z\'/%3E%3C/svg%3E';
-        preview.classList.remove('hidden');
-    }
+        }
+    };
+    reader.readAsDataURL(file);
 }
 
 // ============================================
@@ -413,7 +426,7 @@ function renderDynamicPesertaForm() {
                 <div class="mb-4">
                     <label class="block text-sm font-semibold text-gray-200 mb-2">Upload Teks Pidato (PDF) <span class="text-red-400">*</span></label>
                     <input type="file" name="teksPidato" id="teksPidatoInput" accept=".pdf" required
-                        onchange="if(validateFileSize(this)) previewFile(this, 'previewTeksPidato')"
+                        onchange="handleFileUpload(this, 'previewTeksPidato', 'teksPidatoData')"
                         class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
                     <p class="text-xs text-gray-400 mt-1">Format PDF, maks 2MB</p>
                     <img id="previewTeksPidato" class="foto-preview mt-2 hidden" src="#" alt="Preview Teks Pidato">
@@ -534,7 +547,7 @@ function generateAnggotaCard(index, label, showGender, isRequired, showPeran = f
                 <div class="md:col-span-2">
                     <label class="block text-sm font-semibold text-gray-200 mb-2">Upload Foto ${requiredMark}</label>
                     <input type="file" name="foto${index}" id="fotoInput${index}" ${requiredAttr} accept="image/*" 
-                        onchange="if(validateFileSize(this)) previewFile(this, 'preview${index}')"
+                        onchange="handleFileUpload(this, 'preview${index}', 'fotoData${index}')"
                         class="input-field w-full px-4 py-3 rounded-xl bg-gray-700">
                     <p class="text-xs text-gray-400 mt-1">Format: JPG/PNG, maks 2MB</p>
                     <img id="preview${index}" class="foto-preview mt-2 hidden" src="#" alt="Preview Foto">
@@ -689,7 +702,7 @@ function prepareSubmissionData() {
                 kelas: formData[`kelas${i}`],
                 peran: formData[`peran${i}`] || null,
                 maqro: formData[`maqro`] || null,
-                statusWajib: i <= 9 ? 'WAJIB' : 'CADANGAN',
+                statusWajib: i <= 9 ? 'WAJIB' : 'CADANGANO',
                 fotoData: formData[`fotoData${i}`] || null
             });
         }
