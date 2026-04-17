@@ -107,6 +107,10 @@
                 </div>
                 <div class="flex items-center space-x-4">
                     <button onclick="refreshData()" class="p-2 text-gray-300 hover:text-emerald-400"><i class="fas fa-sync-alt" id="refreshIcon"></i></button>
+                    <!-- Tombol Ganti Password -->
+                    <button onclick="showChangePasswordModal()" class="p-2 text-gray-300 hover:text-emerald-400 touch-target" title="Ubah Password">
+                        <i class="fas fa-key"></i>
+                    </button>
                     <span class="text-sm text-gray-400" id="currentTime"></span>
                 </div>
             </div>
@@ -227,7 +231,7 @@
         </div>
     </main>
 
-    <!-- Detail Modal -->
+    <!-- Detail Modal (Diperbarui) -->
     <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/70 flex items-center justify-center p-4">
         <div class="bg-gray-800 rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-auto">
             <div class="gradient-emerald p-4 flex justify-between items-center">
