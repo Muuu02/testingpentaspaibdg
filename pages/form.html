@@ -139,8 +139,6 @@
             border: 2px solid #10b981;
             background: #1e293b;
         }
-
-        /* Tombol kembali ke atas */
         #btnScrollTop {
             transition: opacity 0.3s, transform 0.3s;
         }
@@ -429,7 +427,7 @@
                         </div>
                     </div>
                     
-                    <!-- Upload Berkas Persyaratan (Langsung) dengan Preview -->
+                    <!-- Upload Berkas Persyaratan (Langsung) -->
                     <div class="mb-6 p-4 rounded-xl border border-amber-500/30" style="background-color: #1e293b;">
                         <h4 class="font-semibold text-amber-400 mb-3">
                             <i class="fas fa-upload mr-2"></i>Upload Berkas Persyaratan
@@ -529,6 +527,14 @@
                         <div class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #3b82f6;">
                             <h3 class="font-bold text-blue-400 mb-3"><i class="fas fa-users mr-2"></i>Data Peserta</h3>
                             <div id="resumePesertaContainer" class="space-y-3">
+                                <!-- Diisi oleh JS -->
+                            </div>
+                        </div>
+                        
+                        <!-- Status Berkas -->
+                        <div id="resumeBerkasContainer" class="rounded-xl p-4 md:p-6" style="background-color: #1e293b; border: 1px solid #10b981;">
+                            <h3 class="font-bold text-emerald-400 mb-3"><i class="fas fa-check-circle mr-2"></i>Status Berkas</h3>
+                            <div id="berkasStatus" class="text-sm text-gray-300">
                                 <!-- Diisi oleh JS -->
                             </div>
                         </div>
