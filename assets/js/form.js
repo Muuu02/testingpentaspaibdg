@@ -268,7 +268,6 @@ function renderDynamicPesertaForm() {
         html += generateAnggotaCard(1, 'Data Peserta', true, true);
     }
     container.innerHTML = html;
-    if (selectedLomba==='lccp') {}
     // isi draft
     for (let [k,v] of Object.entries(formData)) {
         const f = document.querySelector(`[name="${k}"]`);
@@ -388,8 +387,36 @@ function shareWhatsApp() { /* ... */ }
 // ============================================
 function initScrollTop() {
     const btn = document.getElementById('btnScrollTop');
+    if (!btn) return;
     window.addEventListener('scroll', () => btn.classList.toggle('hidden', window.scrollY<=300));
     btn.addEventListener('click', () => window.scrollTo({top:0,behavior:'smooth'}));
+}
+
+// ============================================
+// INIT LOMBA SELECTION (DIPERBAIKI)
+// ============================================
+function initLombaSelection() {
+    const lombaOptions = document.querySelectorAll('.lomba-option');
+    const jenisLombaInput = document.getElementById('jenisLombaInput');
+    if (!lombaOptions.length) return;
+    
+    lombaOptions.forEach(option => {
+        option.addEventListener('click', function(e) {
+            lombaOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedLomba = this.dataset.lomba;
+            if (jenisLombaInput) jenisLombaInput.value = selectedLomba;
+            saveDraft();
+        });
+    });
+    
+    // Preselect dari URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const preselectedLomba = urlParams.get('lomba');
+    if (preselectedLomba) {
+        const option = document.querySelector(`.lomba-option[data-lomba="${preselectedLomba}"]`);
+        if (option) option.click();
+    }
 }
 
 // ============================================
@@ -398,7 +425,11 @@ function initScrollTop() {
 document.addEventListener('DOMContentLoaded', () => {
     initLombaSelection();
     form.addEventListener('submit', handleFormSubmit);
-    persetujuanCheckbox.addEventListener('change', ()=> submitBtn.disabled=!persetujuanCheckbox.checked);
+    if (persetujuanCheckbox) {
+        persetujuanCheckbox.addEventListener('change', ()=> {
+            if (submitBtn) submitBtn.disabled = !persetujuanCheckbox.checked;
+        });
+    }
     if (loadDraft()) restoreFormFromDraft();
     form.addEventListener('input', ()=>{ saveStepData(currentStep); saveDraft(); });
     form.addEventListener('change', ()=>{ saveStepData(currentStep); saveDraft(); });
