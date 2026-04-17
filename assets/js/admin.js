@@ -2,12 +2,13 @@
  * ============================================================
  * ADMIN PANEL - PENTAS PAI KOTA BANDUNG 2026
  * ============================================================
- * Fitur: Dashboard, Pendaftaran (detail+edit), Nomor Undian,
- * Sekolah, Pengaturan, Export, Kelola Akun, Mobile Sidebar.
+ * Fitur lengkap + Perbaikan preview berkas berat
  * ============================================================
  */
 
-// State
+// ============================================
+// STATE & KONFIGURASI
+// ============================================
 let currentUser = null;
 let currentPage = 1;
 const itemsPerPage = 10;
@@ -45,7 +46,6 @@ function getRoleLabel(role) {
 }
 
 function logout() { sessionStorage.clear(); window.location.href = 'login.html'; }
-
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 
 // ============================================
@@ -136,16 +136,29 @@ function updateRecentActivity() {
 }
 
 // ============================================
-// TABLE (HANYA ICON MATA)
+// TABLE
 // ============================================
 function renderTable() {
     const tbody = document.getElementById('dataTableBody');
     const page = filteredData.slice((currentPage-1)*itemsPerPage, currentPage*itemsPerPage);
     const lombaNames = { lccp:'LCC-PAI', ldc:'LDC', mtq:'MTQ', mhq:'MHQ', lki:'LKI', lpsb:'LPSB', lsqr:'LSQR', lpa:'LPA' };
     tbody.innerHTML = page.map(d => `
-        <tr><td>${d.id}</td><td>${d.namaPeserta}</td><td class="hidden sm:table-cell">${d.namaSekolah}</td><td>${lombaNames[d.jenisLomba]||d.jenisLomba}</td>
-        <td><span class="status-badge ${d.status==='TERVERIFIKASI'?'status-terverifikasi':d.status==='DITOLAK'?'status-ditolak':'status-menunggu'}">${d.status==='TERVERIFIKASI'?'Terverifikasi':d.status==='DITOLAK'?'Ditolak':'Menunggu'}</span></td>
-        <td><button onclick="showDetail('${d.id}')" class="text-emerald-400 mr-2"><i class="fas fa-eye"></i></button></td></tr>
+        <tr>
+            <td class="px-3 py-3 text-sm">${d.id}</td>
+            <td class="px-3 py-3 text-sm">${d.namaPeserta}</td>
+            <td class="px-3 py-3 text-sm hidden sm:table-cell">${d.namaSekolah}</td>
+            <td class="px-3 py-3 text-sm">${lombaNames[d.jenisLomba]||d.jenisLomba}</td>
+            <td class="px-3 py-3"><span class="status-badge ${d.status==='TERVERIFIKASI'?'status-terverifikasi':d.status==='DITOLAK'?'status-ditolak':'status-menunggu'}">${d.status==='TERVERIFIKASI'?'Terverifikasi':d.status==='DITOLAK'?'Ditolak':'Menunggu'}</span></td>
+            <td class="px-3 py-3">
+                <button onclick="showDetail('${d.id}')" class="text-emerald-400 hover:text-emerald-300 mr-2 touch-target" title="Detail">
+                    <i class="fas fa-eye"></i>
+                </button>
+                ${canVerify() && d.status==='MENUNGGU_VERIFIKASI' ? `
+                <button onclick="verifyData('${d.id}','TERVERIFIKASI')" class="text-emerald-400 hover:text-emerald-300 mr-2" title="Terima"><i class="fas fa-check"></i></button>
+                <button onclick="verifyData('${d.id}','DITOLAK')" class="text-red-400 hover:text-red-300" title="Tolak"><i class="fas fa-times"></i></button>
+                ` : ''}
+            </td>
+        </tr>
     `).join('') || '<tr><td colspan="6" class="text-center py-8 text-gray-400">Tidak ada data</td></tr>';
     document.getElementById('showingCount').textContent = page.length;
     document.getElementById('totalCount').textContent = filteredData.length;
@@ -168,113 +181,130 @@ function prevPage() { if (currentPage>1) { currentPage--; renderTable(); } }
 function nextPage() { if (currentPage*itemsPerPage < filteredData.length) { currentPage++; renderTable(); } }
 
 // ============================================
-// DETAIL MODAL (DENGAN PREVIEW BERKAS DAN EDIT)
+// UTILITAS BASE64 -> BLOB URL
 // ============================================
-function showDetail(id) {
-    const d = allData.find(d=>d.id===id); if(!d) return;
-    let full = { peserta: [], berkas: null, ldc: null };
-    try { full = JSON.parse(d.data_peserta_json||'{}'); } catch(e){}
-    const peserta = full.peserta || [];
-    const berkas = full.berkas || {};
-    const ldc = full.ldc || {};
-
-    // Render peserta
-    const pesertaHtml = peserta.map(p=>`
-        <div class="flex items-start gap-3 border-b border-gray-600 pb-3 mb-3">
-            ${p.fotoData?`<img src="${p.fotoData}" class="w-16 h-16 object-cover rounded border border-emerald-500">`:'<div class="w-16 h-16 bg-gray-700 rounded flex items-center justify-center"><i class="fas fa-user text-2xl text-gray-400"></i></div>'}
-            <div><p class="font-semibold text-white">${p.nama} (${p.jk==='L'?'L':'P'})</p><p class="text-sm text-gray-300">NISN: ${p.nisn} | Kelas: ${p.kelas}</p>${p.peran?`<p class="text-sm text-amber-400">Peran: ${p.peran}</p>`:''}</div>
-        </div>
-    `).join('');
-
-    // Render berkas dengan tombol preview
-    const berkasItems = [];
-    if (berkas.rapor) berkasItems.push({ name: 'Rapor', url: berkas.rapor });
-    if (berkas.sk) berkasItems.push({ name: 'SK Juara', url: berkas.sk });
-    if (berkas.akta) berkasItems.push({ name: 'Akta/KK', url: berkas.akta });
-    if (ldc.teksPidatoData) berkasItems.push({ name: 'Teks Pidato', data: ldc.teksPidatoData });
-
-    const berkasHtml = berkasItems.length ? `
-        <div class="mt-4 p-4 bg-gray-900 rounded-lg">
-            <h4 class="text-emerald-400 font-bold mb-3"><i class="fas fa-paperclip mr-2"></i>Berkas</h4>
-            <div class="flex flex-wrap gap-3">
-                ${berkasItems.map(b => {
-                    if (b.url) return `<a href="${b.url}" target="_blank" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center"><i class="fas fa-eye mr-2"></i>${b.name}</a>`;
-                    else return `<button onclick="previewBase64File('${b.data}', '${b.name}')" class="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg flex items-center"><i class="fas fa-eye mr-2"></i>${b.name}</button>`;
-                }).join('')}
-            </div>
-        </div>
-    ` : '';
-
-    // Tombol aksi (edit, verifikasi, tolak)
-    const actionButtons = `
-        <div class="mt-6 flex gap-3">
-            <button onclick="editPendaftaran('${d.id}')" class="flex-1 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600"><i class="fas fa-edit mr-2"></i>Edit</button>
-            ${canVerify() && d.status==='MENUNGGU_VERIFIKASI' ? `
-                <button onclick="verifyData('${d.id}','TERVERIFIKASI')" class="flex-1 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-600"><i class="fas fa-check mr-2"></i>Verifikasi</button>
-                <button onclick="verifyData('${d.id}','DITOLAK')" class="flex-1 py-2 bg-red-700 text-white rounded-lg hover:bg-red-600"><i class="fas fa-times mr-2"></i>Tolak</button>
-            ` : ''}
-        </div>
-    `;
-
-    document.getElementById('detailContent').innerHTML = `
-        <div class="grid md:grid-cols-2 gap-4">
-            <div><h4 class="text-emerald-400 mb-2">Info</h4><div class="space-y-1 text-sm"><div class="flex justify-between"><span class="text-gray-400">ID</span><span class="text-white">${d.id}</span></div><div class="flex justify-between"><span class="text-gray-400">Status</span><span class="text-white">${d.status}</span></div><div class="flex justify-between"><span class="text-gray-400">Tanggal</span><span class="text-white">${formatTanggalIndonesia(d.timestamp)}</span></div><div class="flex justify-between"><span class="text-gray-400">Lomba</span><span class="text-white">${d.jenisLomba}</span></div></div></div>
-            <div><h4 class="text-emerald-400 mb-2">Sekolah</h4><div class="space-y-1 text-sm"><div class="flex justify-between"><span class="text-gray-400">Sekolah</span><span class="text-white">${d.namaSekolah}</span></div><div class="flex justify-between"><span class="text-gray-400">NPSN</span><span class="text-white">${d.npsn}</span></div><div class="flex justify-between"><span class="text-gray-400">Kecamatan</span><span class="text-white">${d.kecamatan}</span></div><div class="flex justify-between"><span class="text-gray-400">Pendamping</span><span class="text-white">${d.namaPendamping} (${d.hpPendamping})</span></div></div></div>
-        </div>
-        <div class="mt-4"><h4 class="text-emerald-400 mb-2">Peserta (${peserta.length})</h4><div class="max-h-60 overflow-y-auto">${pesertaHtml||'<p class="text-gray-400">Tidak ada data</p>'}</div></div>
-        ${berkasHtml}
-        ${actionButtons}
-    `;
-    document.getElementById('detailModal').classList.remove('hidden');
-}
-
-// Fungsi preview Base64 (untuk berkas yang masih dalam bentuk data)
-function previewBase64File(data, filename) {
-    if (!data) return;
-    let content = data.includes(',') ? data.split(',')[1] : data;
+function base64ToBlob(base64, mimeType = 'application/pdf') {
+    let content = base64;
+    if (content.includes(',')) content = content.split(',')[1];
     const byteCharacters = atob(content);
     const byteNumbers = new Array(byteCharacters.length);
     for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
     const byteArray = new Uint8Array(byteNumbers);
-    const blob = new Blob([byteArray], { type: 'application/pdf' });
+    return new Blob([byteArray], { type: mimeType });
+}
+
+function openBase64InNewTab(base64, filename = 'file', mime = 'application/pdf') {
+    const blob = base64ToBlob(base64, mime);
     const url = URL.createObjectURL(blob);
     window.open(url, '_blank');
 }
 
+// ============================================
+// DETAIL & VERIFIKASI (DIPERBAIKI)
+// ============================================
+function showDetail(id) {
+    const d = allData.find(d=>d.id===id); if(!d) return;
+    let fullData = { peserta: [], berkas: null, ldc: null };
+    try { fullData = JSON.parse(d.data_peserta_json||'{}'); } catch(e) {}
+    const peserta = fullData.peserta || [];
+    const berkas = fullData.berkas || {};
+    const ldc = fullData.ldc || {};
+
+    // HTML untuk foto peserta (bisa diklik lightbox)
+    const pesertaHtml = peserta.map((p, idx) => `
+        <div class="flex items-start gap-3 border-b border-gray-600 pb-3 mb-3">
+            ${p.fotoData ? `
+                <img src="${p.fotoData}" onclick="showImageLightbox('${p.fotoData}', '${p.nama}')" class="w-16 h-16 object-cover rounded border border-emerald-500 cursor-pointer hover:opacity-80">
+            ` : `
+                <div class="w-16 h-16 bg-gray-700 rounded flex items-center justify-center"><i class="fas fa-user text-2xl text-gray-400"></i></div>
+            `}
+            <div>
+                <p class="font-semibold text-white">${p.nama} (${p.jk==='L'?'L':'P'})</p>
+                <p class="text-sm text-gray-300">NISN: ${p.nisn} | Kelas: ${p.kelas}</p>
+                <p class="text-sm text-gray-300">TTL: ${p.ttl||'-'}</p>
+                ${p.peran ? `<p class="text-sm text-amber-400">Peran: ${p.peran}</p>` : ''}
+                ${p.maqro ? `<p class="text-sm text-blue-400">Maqro: ${p.maqro}</p>` : ''}
+            </div>
+        </div>
+    `).join('');
+
+    // Tombol untuk berkas (tidak menampilkan gambar langsung)
+    const berkasButtons = [];
+    if (berkas.rapor) berkasButtons.push({ name: 'Rapor', data: berkas.rapor, mime: 'application/pdf' });
+    if (berkas.sk) berkasButtons.push({ name: 'SK Juara', data: berkas.sk, mime: 'application/pdf' });
+    if (berkas.akta) berkasButtons.push({ name: 'Akta/KK', data: berkas.akta, mime: 'application/pdf' });
+    if (ldc.teksPidatoData) berkasButtons.push({ name: 'Teks Pidato', data: ldc.teksPidatoData, mime: 'application/pdf' });
+
+    const berkasHtml = berkasButtons.length ? `
+        <div class="mt-4 p-4 bg-gray-900 rounded">
+            <h4 class="text-emerald-400 mb-3 text-lg"><i class="fas fa-paperclip mr-2"></i>Berkas Persyaratan</h4>
+            <div class="flex flex-wrap gap-3">
+                ${berkasButtons.map(b => `
+                    <button onclick="openBase64InNewTab('${b.data}', '${b.name}', '${b.mime}')" class="px-4 py-2 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-sm">
+                        <i class="fas fa-external-link-alt mr-2"></i>${b.name}
+                    </button>
+                `).join('')}
+            </div>
+        </div>
+    ` : '<p class="text-gray-400 mt-4 text-center italic">Tidak ada berkas diunggah.</p>';
+
+    const catatanHtml = d.catatan ? `
+        <div class="mt-4 p-4 bg-amber-900/30 border border-amber-600 rounded-lg">
+            <p class="text-amber-300"><i class="fas fa-sticky-note mr-2"></i>Catatan: ${d.catatan}</p>
+        </div>
+    ` : '';
+
+    const verifyButtons = canVerify() && d.status === 'MENUNGGU_VERIFIKASI' ? `
+        <div class="mt-6 flex gap-3">
+            <button onclick="verifyData('${d.id}','TERVERIFIKASI');closeDetailModal()" class="flex-1 py-2 bg-emerald-700 text-white rounded-lg hover:bg-emerald-600"><i class="fas fa-check mr-2"></i>Verifikasi</button>
+            <button onclick="verifyData('${d.id}','DITOLAK');closeDetailModal()" class="flex-1 py-2 bg-red-700 text-white rounded-lg hover:bg-red-600"><i class="fas fa-times mr-2"></i>Tolak</button>
+        </div>
+    ` : '';
+
+    // Tombol Edit (untuk super_admin/verifikator)
+    const editButton = (currentUser.role === 'super_admin' || currentUser.role === 'verifikator') ? `
+        <button onclick="editPendaftaran('${d.id}')" class="mt-4 w-full py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600">
+            <i class="fas fa-edit mr-2"></i>Edit Data
+        </button>
+    ` : '';
+
+    document.getElementById('detailContent').innerHTML = `
+        <div class="grid md:grid-cols-2 gap-4">
+            <div>
+                <h4 class="text-emerald-400 mb-2"><i class="fas fa-info-circle mr-2"></i>Informasi Pendaftaran</h4>
+                <div class="space-y-1 text-sm">
+                    <div class="flex justify-between"><span class="text-gray-400">ID</span><span class="text-white font-mono">${d.id}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Status</span><span class="text-white">${d.status}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Tanggal</span><span class="text-white">${formatTanggalIndonesia(d.timestamp)}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Lomba</span><span class="text-white">${d.namaLomba || d.jenisLomba}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Nomor Urut</span><span class="text-white font-bold text-amber-400">${d.nomorUrut || '-'}</span></div>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-emerald-400 mb-2"><i class="fas fa-school mr-2"></i>Data Sekolah</h4>
+                <div class="space-y-1 text-sm">
+                    <div class="flex justify-between"><span class="text-gray-400">Sekolah</span><span class="text-white">${d.namaSekolah}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">NPSN</span><span class="text-white">${d.npsn}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Kecamatan</span><span class="text-white">${d.kecamatan}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">Pendamping</span><span class="text-white">${d.namaPendamping}</span></div>
+                    <div class="flex justify-between"><span class="text-gray-400">HP</span><span class="text-white">${d.hpPendamping}</span></div>
+                </div>
+            </div>
+        </div>
+        <div class="mt-6">
+            <h4 class="text-emerald-400 mb-2"><i class="fas fa-users mr-2"></i>Data Peserta (${peserta.length} orang)</h4>
+            <div class="max-h-80 overflow-y-auto pr-2">${pesertaHtml || '<p class="text-gray-400 text-center py-4">Tidak ada data peserta</p>'}</div>
+        </div>
+        ${berkasHtml}
+        ${catatanHtml}
+        ${verifyButtons}
+        ${editButton}
+    `;
+    document.getElementById('detailModal').classList.remove('hidden');
+}
+
 function closeDetailModal() { document.getElementById('detailModal').classList.add('hidden'); }
 
-// ============================================
-// EDIT PENDAFTARAN (UI SEDERHANA)
-// ============================================
-function editPendaftaran(id) {
-    // Implementasi edit: bisa menampilkan form modal baru, atau mengarahkan ke halaman edit.
-    // Untuk sederhana, kita gunakan prompt untuk mengedit data penting, lalu kirim ke backend.
-    const d = allData.find(d=>d.id===id);
-    if (!d) return;
-    const newNama = prompt('Edit Nama Peserta:', d.namaPeserta);
-    if (newNama !== null) {
-        // Panggil backend untuk update
-        updatePendaftaranField(id, 'namaPeserta', newNama);
-    }
-    // Untuk edit lengkap, sebaiknya buat modal form terpisah. Ini contoh dasar.
-}
-
-async function updatePendaftaranField(id, field, value) {
-    try {
-        const res = await fetch(CONFIG.GAS_WEB_APP_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: 'updatePendaftaran', id, field, value })
-        });
-        const data = await res.json();
-        if (data.success) { showNotification('Data diperbarui', 'success'); refreshData(); }
-        else showNotification(data.message, 'error');
-    } catch (e) { showNotification('Gagal', 'error'); }
-}
-
-// ============================================
-// VERIFIKASI
-// ============================================
 async function verifyData(id, status) {
     if (!canVerify()) return showNotification('Tidak ada akses','error');
     const catatan = status==='DITOLAK' ? prompt('Alasan penolakan:') : '';
@@ -284,9 +314,32 @@ async function verifyData(id, status) {
             body:JSON.stringify({ action:'updateStatus', id, status, catatan, verifiedBy:currentUser.username })
         });
         const data = await res.json();
-        if (data.success) { showNotification('Status diperbarui','success'); refreshData(); closeDetailModal(); }
+        if (data.success) { showNotification('Status diperbarui','success'); refreshData(); }
         else throw new Error(data.message);
     } catch(e) { showNotification('Gagal: '+e.message,'error'); }
+}
+
+// Fungsi edit (akan dikembangkan lebih lanjut)
+function editPendaftaran(id) {
+    // Untuk sementara, tampilkan notifikasi
+    showNotification('Fitur edit akan segera hadir', 'info');
+    // Nanti bisa diisi dengan membuka modal edit
+}
+
+// Lightbox untuk foto
+function showImageLightbox(base64, title) {
+    let lb = document.getElementById('imageLightbox');
+    if (!lb) {
+        lb = document.createElement('div');
+        lb.id = 'imageLightbox';
+        lb.className = 'fixed inset-0 z-50 hidden bg-black/90 flex items-center justify-center p-4';
+        lb.innerHTML = `<div class="relative max-w-4xl"><button class="absolute -top-10 right-0 text-white text-3xl" onclick="document.getElementById('imageLightbox').classList.add('hidden')">&times;</button><img id="lightboxImg" class="max-w-full max-h-[90vh] rounded"><p id="lightboxTitle" class="text-white text-center mt-2"></p></div>`;
+        document.body.appendChild(lb);
+        lb.addEventListener('click', e => { if (e.target === lb) lb.classList.add('hidden'); });
+    }
+    document.getElementById('lightboxImg').src = base64;
+    document.getElementById('lightboxTitle').textContent = title;
+    lb.classList.remove('hidden');
 }
 
 // ============================================
@@ -435,6 +488,30 @@ async function tambahAkun() {
         await fetch(CONFIG.GAS_WEB_APP_URL, { method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({ action:'addAdmin', username:u, passwordHash:ph, nama_lengkap:n, role:r }) });
         showNotification('Akun ditambah','success'); loadAkunList();
         ['newUsername','newNama','newPassword','newRole'].forEach(id=>document.getElementById(id).value='');
+    } catch(e) { showNotification('Gagal','error'); }
+}
+
+// Ganti Password Sendiri
+function showChangePasswordModal() {
+    const old = prompt('Masukkan password lama:');
+    if (!old) return;
+    const newPass = prompt('Masukkan password baru:');
+    if (!newPass) return;
+    changeOwnPassword(old, newPass);
+}
+async function changeOwnPassword(oldPass, newPass) {
+    const oldHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(oldPass));
+    const oldHashHex = Array.from(new Uint8Array(oldHash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    const newHash = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(newPass));
+    const newHashHex = Array.from(new Uint8Array(newHash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+    try {
+        const res = await fetch(CONFIG.GAS_WEB_APP_URL, {
+            method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+            body:JSON.stringify({ action:'changePassword', username:currentUser.username, oldHash:oldHashHex, newHash:newHashHex })
+        });
+        const data = await res.json();
+        if (data.success) { showNotification('Password berhasil diubah','success'); }
+        else { showNotification(data.message||'Gagal','error'); }
     } catch(e) { showNotification('Gagal','error'); }
 }
 
