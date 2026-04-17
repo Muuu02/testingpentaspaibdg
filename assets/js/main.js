@@ -457,7 +457,7 @@ function initFloatingWhatsApp() {
     const waFloat = document.createElement('a');
     waFloat.href = `https://wa.me/${CONFIG.WHATSAPP_ADMIN}?text=Halo%20Panitia%20PENTAS%20PAI%202026%2C%20saya%20ingin%20bertanya...`;
     waFloat.target = '_blank';
-    waFloat.className = 'whatsapp-float fixed bottom-20 right-6 w-14 h-14 md:w-16 md:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg z-40 animate-pulse';
+    waFloat.className = 'whatsapp-float fixed bottom-6 right-6 w-14 h-14 md:w-16 md:h-16 bg-green-500 rounded-full flex items-center justify-center shadow-lg z-40 animate-pulse';
     waFloat.innerHTML = '<i class="fab fa-whatsapp text-3xl md:text-4xl text-white"></i>';
     waFloat.setAttribute('aria-label', 'Chat via WhatsApp');
     document.body.appendChild(waFloat);
