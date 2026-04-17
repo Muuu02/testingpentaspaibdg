@@ -4,7 +4,8 @@
  * ============================================================
  * Fitur lengkap: Auto-save, Navigasi Warning, Validasi File,
  * Preview, LDC (Tema & Teks Pidato), Upload Berkas Base64,
- * Konfirmasi Submit, Tombol Kembali ke Atas.
+ * Konfirmasi Submit, Tombol Kembali ke Atas,
+ * PREVIEW BERKAS DI RESUME.
  * ============================================================
  */
 
@@ -136,6 +137,23 @@ function simpanBase64(input, fieldName) {
     reader.readAsDataURL(file);
 }
 
+// Preview Base64 dari resume
+function previewBase64File(base64, filename) {
+    if (!base64) return;
+    let content = base64;
+    if (content.includes(',')) content = content.split(',')[1];
+    const byteCharacters = atob(content);
+    const byteNumbers = new Array(byteCharacters.length);
+    for (let i = 0; i < byteCharacters.length; i++) byteNumbers[i] = byteCharacters.charCodeAt(i);
+    const byteArray = new Uint8Array(byteNumbers);
+    let mime = 'application/pdf';
+    if (filename.toLowerCase().endsWith('.jpg') || filename.toLowerCase().endsWith('.jpeg')) mime = 'image/jpeg';
+    else if (filename.toLowerCase().endsWith('.png')) mime = 'image/png';
+    const blob = new Blob([byteArray], { type: mime });
+    const url = URL.createObjectURL(blob);
+    window.open(url, '_blank');
+}
+
 // ============================================
 // STEP NAVIGATION
 // ============================================
@@ -257,17 +275,17 @@ function renderDynamicPesertaForm() {
         if (selectedLomba === 'mtq') html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Maqro <span class="text-red-400">*</span></label><select name="maqro" required class="input-field w-full px-4 py-3 rounded-xl">${lomba.maqro.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}</select></div>`;
         if (selectedLomba === 'ldc') {
             const tema = [
-    'Peduli dan berbagi kepada yang membutuhkan',
-    'Menjadi pemimpin yang dicintai',
-    'Cerdas bergaul sesuai ajaran Islam',
-    'Mencintai kedua orang tua',
-    'Cinta kepada guru',
-    'Menjaga masa depan dengan mencintai alam',
-    'Aksi jarimu di media sosial adalah hisabmu di akhirat',
-    'Mencintai Rasulullah saw.',
-    'Menjaga persatuan dengan tasamuh',
-    'Pemuda-pemudi impian masa depan'
-];
+                'Peduli dan berbagi kepada yang membutuhkan',
+                'Menjadi pemimpin yang dicintai',
+                'Cerdas bergaul sesuai ajaran Islam',
+                'Mencintai kedua orang tua',
+                'Cinta kepada guru',
+                'Menjaga masa depan dengan mencintai alam',
+                'Aksi jarimu di media sosial adalah hisabmu di akhirat',
+                'Mencintai Rasulullah saw.',
+                'Menjaga persatuan dengan tasamuh',
+                'Pemuda-pemudi impian masa depan'
+            ];
             html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Tema Pidato <span class="text-red-400">*</span></label><select name="temaPidato" required class="input-field w-full px-4 py-3 rounded-xl"><option value="">Pilih</option>${tema.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>`;
             html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Upload Teks Pidato (PDF) <span class="text-red-400">*</span></label><input type="file" name="teksPidato" id="teksPidatoInput" accept=".pdf" required onchange="if(validateFileSize(this)){previewFile(this,'previewTeksPidato');simpanBase64(this,'teksPidatoBase64');}" class="input-field w-full px-4 py-3 rounded-xl bg-gray-700"><img id="previewTeksPidato" class="foto-preview mt-2 hidden" src="#" alt="Preview"></div>`;
         }
@@ -322,12 +340,27 @@ function renderResume() {
     }
     document.getElementById('resumePesertaContainer').innerHTML = pesertaHtml || '<p class="text-gray-400">Tidak ada data</p>';
 
-    const berkasStatus = [];
-    if (formData.raporBase64) berkasStatus.push('✅ Rapor');
-    if (formData.skBase64) berkasStatus.push('✅ SK Juara');
-    if (formData.aktaBase64) berkasStatus.push('✅ Akta/KK');
-    if (selectedLomba==='ldc' && formData.teksPidatoBase64) berkasStatus.push('✅ Teks Pidato');
-    document.getElementById('berkasStatus').innerHTML = berkasStatus.length ? berkasStatus.join(' · ') : '⚠️ Belum semua berkas diunggah';
+    // Status berkas dengan tombol preview
+    const berkasContainer = document.getElementById('berkasStatus');
+    berkasContainer.innerHTML = '';
+    const berkasItems = [];
+    if (formData.raporBase64) berkasItems.push({ name: 'Rapor', data: formData.raporBase64 });
+    if (formData.skBase64) berkasItems.push({ name: 'SK Juara', data: formData.skBase64 });
+    if (formData.aktaBase64) berkasItems.push({ name: 'Akta/KK', data: formData.aktaBase64 });
+    if (selectedLomba==='ldc' && formData.teksPidatoBase64) berkasItems.push({ name: 'Teks Pidato', data: formData.teksPidatoBase64 });
+
+    if (berkasItems.length) {
+        berkasItems.forEach(item => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'text-sm bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded mr-2 mb-2';
+            btn.innerHTML = `<i class="fas fa-eye mr-1"></i>${item.name}`;
+            btn.onclick = () => previewBase64File(item.data, item.name + '.pdf');
+            berkasContainer.appendChild(btn);
+        });
+    } else {
+        berkasContainer.innerHTML = '<span class="text-gray-400">Belum ada berkas</span>';
+    }
 }
 
 // ============================================
@@ -404,7 +437,7 @@ function initScrollTop() {
 }
 
 // ============================================
-// INIT LOMBA SELECTION (DIPERBAIKI)
+// INIT LOMBA SELECTION
 // ============================================
 function initLombaSelection() {
     const lombaOptions = document.querySelectorAll('.lomba-option');
@@ -412,7 +445,7 @@ function initLombaSelection() {
     if (!lombaOptions.length) return;
     
     lombaOptions.forEach(option => {
-        option.addEventListener('click', function(e) {
+        option.addEventListener('click', function() {
             lombaOptions.forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
             selectedLomba = this.dataset.lomba;
@@ -421,7 +454,6 @@ function initLombaSelection() {
         });
     });
     
-    // Preselect dari URL
     const urlParams = new URLSearchParams(window.location.search);
     const preselectedLomba = urlParams.get('lomba');
     if (preselectedLomba) {
@@ -436,11 +468,7 @@ function initLombaSelection() {
 document.addEventListener('DOMContentLoaded', () => {
     initLombaSelection();
     form.addEventListener('submit', handleFormSubmit);
-    if (persetujuanCheckbox) {
-        persetujuanCheckbox.addEventListener('change', ()=> {
-            if (submitBtn) submitBtn.disabled = !persetujuanCheckbox.checked;
-        });
-    }
+    if (persetujuanCheckbox) persetujuanCheckbox.addEventListener('change', ()=> { if (submitBtn) submitBtn.disabled = !persetujuanCheckbox.checked; });
     if (loadDraft()) restoreFormFromDraft();
     form.addEventListener('input', ()=>{ saveStepData(currentStep); saveDraft(); });
     form.addEventListener('change', ()=>{ saveStepData(currentStep); saveDraft(); });
