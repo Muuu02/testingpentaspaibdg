@@ -253,6 +253,12 @@
         .countdown-box div:first-child {
             color: white !important;
         }
+    #btnScrollTop.hidden {
+    display: none !important;
+}
+#btnScrollTop.flex {
+    display: flex !important;
+}
     </style>
 </head>
 <body class="font-inter text-gray-100 antialiased">
@@ -767,7 +773,11 @@
             </div>
         </div>
     </div>
-<script>
+<!-- Tombol Kembali ke Atas -->
+<button id="btnScrollTop" class="fixed bottom-32 right-6 w-12 h-12 bg-emerald-600 text-white rounded-full shadow-lg hidden items-center justify-center hover:bg-emerald-500 transition z-50">
+    <i class="fas fa-arrow-up"></i>
+</button>
+    <script>
     (function() {
         const btn = document.getElementById('btnScrollTop');
         if (!btn) return;
