@@ -2,7 +2,7 @@
  * ============================================================
  * ADMIN PANEL - PENTAS PAI KOTA BANDUNG 2026
  * ============================================================
- * Fitur lengkap + Perbaikan preview berkas berat
+ * Fitur lengkap + Tabel hanya ikon mata + Preview berkas ringan
  * ============================================================
  */
 
@@ -136,7 +136,7 @@ function updateRecentActivity() {
 }
 
 // ============================================
-// TABLE
+// TABLE (HANYA IKON MATA)
 // ============================================
 function renderTable() {
     const tbody = document.getElementById('dataTableBody');
@@ -150,13 +150,9 @@ function renderTable() {
             <td class="px-3 py-3 text-sm">${lombaNames[d.jenisLomba]||d.jenisLomba}</td>
             <td class="px-3 py-3"><span class="status-badge ${d.status==='TERVERIFIKASI'?'status-terverifikasi':d.status==='DITOLAK'?'status-ditolak':'status-menunggu'}">${d.status==='TERVERIFIKASI'?'Terverifikasi':d.status==='DITOLAK'?'Ditolak':'Menunggu'}</span></td>
             <td class="px-3 py-3">
-                <button onclick="showDetail('${d.id}')" class="text-emerald-400 hover:text-emerald-300 mr-2 touch-target" title="Detail">
+                <button onclick="showDetail('${d.id}')" class="text-emerald-400 hover:text-emerald-300 touch-target" title="Detail">
                     <i class="fas fa-eye"></i>
                 </button>
-                ${canVerify() && d.status==='MENUNGGU_VERIFIKASI' ? `
-                <button onclick="verifyData('${d.id}','TERVERIFIKASI')" class="text-emerald-400 hover:text-emerald-300 mr-2" title="Terima"><i class="fas fa-check"></i></button>
-                <button onclick="verifyData('${d.id}','DITOLAK')" class="text-red-400 hover:text-red-300" title="Tolak"><i class="fas fa-times"></i></button>
-                ` : ''}
             </td>
         </tr>
     `).join('') || '<tr><td colspan="6" class="text-center py-8 text-gray-400">Tidak ada data</td></tr>';
@@ -200,7 +196,7 @@ function openBase64InNewTab(base64, filename = 'file', mime = 'application/pdf')
 }
 
 // ============================================
-// DETAIL & VERIFIKASI (DIPERBAIKI)
+// DETAIL MODAL (TANPA EDIT BUTTON)
 // ============================================
 function showDetail(id) {
     const d = allData.find(d=>d.id===id); if(!d) return;
@@ -210,8 +206,7 @@ function showDetail(id) {
     const berkas = fullData.berkas || {};
     const ldc = fullData.ldc || {};
 
-    // HTML untuk foto peserta (bisa diklik lightbox)
-    const pesertaHtml = peserta.map((p, idx) => `
+    const pesertaHtml = peserta.map((p) => `
         <div class="flex items-start gap-3 border-b border-gray-600 pb-3 mb-3">
             ${p.fotoData ? `
                 <img src="${p.fotoData}" onclick="showImageLightbox('${p.fotoData}', '${p.nama}')" class="w-16 h-16 object-cover rounded border border-emerald-500 cursor-pointer hover:opacity-80">
@@ -228,7 +223,6 @@ function showDetail(id) {
         </div>
     `).join('');
 
-    // Tombol untuk berkas (tidak menampilkan gambar langsung)
     const berkasButtons = [];
     if (berkas.rapor) berkasButtons.push({ name: 'Rapor', data: berkas.rapor, mime: 'application/pdf' });
     if (berkas.sk) berkasButtons.push({ name: 'SK Juara', data: berkas.sk, mime: 'application/pdf' });
@@ -261,13 +255,6 @@ function showDetail(id) {
         </div>
     ` : '';
 
-    // Tombol Edit (untuk super_admin/verifikator)
-    const editButton = (currentUser.role === 'super_admin' || currentUser.role === 'verifikator') ? `
-        <button onclick="editPendaftaran('${d.id}')" class="mt-4 w-full py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-600">
-            <i class="fas fa-edit mr-2"></i>Edit Data
-        </button>
-    ` : '';
-
     document.getElementById('detailContent').innerHTML = `
         <div class="grid md:grid-cols-2 gap-4">
             <div>
@@ -298,7 +285,6 @@ function showDetail(id) {
         ${berkasHtml}
         ${catatanHtml}
         ${verifyButtons}
-        ${editButton}
     `;
     document.getElementById('detailModal').classList.remove('hidden');
 }
@@ -319,14 +305,6 @@ async function verifyData(id, status) {
     } catch(e) { showNotification('Gagal: '+e.message,'error'); }
 }
 
-// Fungsi edit (akan dikembangkan lebih lanjut)
-function editPendaftaran(id) {
-    // Untuk sementara, tampilkan notifikasi
-    showNotification('Fitur edit akan segera hadir', 'info');
-    // Nanti bisa diisi dengan membuka modal edit
-}
-
-// Lightbox untuk foto
 function showImageLightbox(base64, title) {
     let lb = document.getElementById('imageLightbox');
     if (!lb) {
@@ -491,7 +469,6 @@ async function tambahAkun() {
     } catch(e) { showNotification('Gagal','error'); }
 }
 
-// Ganti Password Sendiri
 function showChangePasswordModal() {
     const old = prompt('Masukkan password lama:');
     if (!old) return;
