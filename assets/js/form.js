@@ -256,7 +256,18 @@ function renderDynamicPesertaForm() {
         html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Kategori Lomba <span class="text-red-400">*</span></label><select name="jenisKelamin" required class="input-field w-full px-4 py-3 rounded-xl"><option value="">Pilih</option><option value="L">Putra</option><option value="P">Putri</option></select></div>`;
         if (selectedLomba === 'mtq') html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Maqro <span class="text-red-400">*</span></label><select name="maqro" required class="input-field w-full px-4 py-3 rounded-xl">${lomba.maqro.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('')}</select></div>`;
         if (selectedLomba === 'ldc') {
-            const tema = ['Peduli dan berbagi...','Menjadi pemimpin...','Cerdas bergaul...','Mencintai orang tua...','Cinta kepada guru...','Menjaga alam...','Aksi di medsos...','Mencintai Rasulullah...','Menjaga persatuan...','Pemuda impian...'];
+            const tema = [
+    'Peduli dan berbagi kepada yang membutuhkan',
+    'Menjadi pemimpin yang dicintai',
+    'Cerdas bergaul sesuai ajaran Islam',
+    'Mencintai kedua orang tua',
+    'Cinta kepada guru',
+    'Menjaga masa depan dengan mencintai alam',
+    'Aksi jarimu di media sosial adalah hisabmu di akhirat',
+    'Mencintai Rasulullah saw.',
+    'Menjaga persatuan dengan tasamuh',
+    'Pemuda-pemudi impian masa depan'
+];
             html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Tema Pidato <span class="text-red-400">*</span></label><select name="temaPidato" required class="input-field w-full px-4 py-3 rounded-xl"><option value="">Pilih</option>${tema.map(t=>`<option value="${t}">${t}</option>`).join('')}</select></div>`;
             html += `<div class="mb-4"><label class="block text-sm font-semibold text-gray-200 mb-2">Upload Teks Pidato (PDF) <span class="text-red-400">*</span></label><input type="file" name="teksPidato" id="teksPidatoInput" accept=".pdf" required onchange="if(validateFileSize(this)){previewFile(this,'previewTeksPidato');simpanBase64(this,'teksPidatoBase64');}" class="input-field w-full px-4 py-3 rounded-xl bg-gray-700"><img id="previewTeksPidato" class="foto-preview mt-2 hidden" src="#" alt="Preview"></div>`;
         }
