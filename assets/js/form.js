@@ -3,7 +3,8 @@
  * FORM HANDLER - PENTAS PAI KOTA BANDUNG 2026
  * ============================================================
  * Fitur: Auto-save, Navigasi Warning, Validasi File, Preview,
- * LDC, Nomor Peserta Otomatis, Kompresi Gambar, Lightbox.
+ * LDC, Nomor Peserta Otomatis, Kompresi Gambar, Lightbox,
+ * Pengecekan Form Aktif.
  * ============================================================
  */
 
@@ -226,7 +227,7 @@ async function fetchSekolahByNPSN() {
             document.getElementById('alamatSekolahInput').value = data.data.alamat_lengkap || '';
             showNotification('Data ditemukan', 'success');
             saveDraft();
-            fetchNomorPeserta(); // otomatis ambil nomor
+            fetchNomorPeserta();
         } else { showNotification('NPSN tidak ditemukan', 'warning'); }
     } catch (e) { showNotification('Gagal fetch', 'error'); }
     finally { btn.disabled = false; btn.innerHTML = '<i class="fas fa-search"></i> Cek'; }
@@ -282,7 +283,6 @@ function renderDynamicPesertaForm() {
     let html = '';
     const infoJumlah = document.getElementById('infoJumlahPeserta');
 
-    // Nomor Peserta display
     html += `
         <div class="rounded-xl p-4 mb-6 bg-gray-800 border border-gray-600">
             <div class="flex items-center justify-between">
@@ -405,10 +405,14 @@ function showImageLightbox(base64, title) {
 }
 
 // ============================================
-// SUBMIT
+// SUBMIT (DENGAN PENGECEKAN FORM AKTIF)
 // ============================================
 async function handleFormSubmit(e) {
     e.preventDefault();
+    if (!CONFIG.FORM_ACTIVE) {
+        showNotification('Pendaftaran sedang ditutup', 'error');
+        return;
+    }
     if (!persetujuanCheckbox.checked) { showNotification('Setujui pernyataan','error'); return; }
     if (!confirm('Data sudah benar?')) return;
     document.getElementById('loadingOverlay').classList.remove('hidden');
@@ -491,7 +495,27 @@ function initLombaSelection() {
     }
 }
 
+// Pengecekan form aktif
+function checkFormActive() {
+    if (!CONFIG.FORM_ACTIVE) {
+        const main = document.querySelector('main');
+        if (main) {
+            main.innerHTML = `
+                <div class="max-w-2xl mx-auto mt-20 p-8 bg-red-900/30 border border-red-500 rounded-xl text-center">
+                    <i class="fas fa-lock text-5xl text-red-400 mb-4"></i>
+                    <h2 class="text-2xl font-bold text-white mb-3">Pendaftaran Ditutup</h2>
+                    <p class="text-gray-300">Maaf, saat ini form pendaftaran sedang tidak aktif. Silakan hubungi panitia.</p>
+                    <a href="../index.html" class="inline-block mt-6 px-6 py-3 bg-emerald-700 text-white rounded-lg">Kembali ke Beranda</a>
+                </div>
+            `;
+        }
+        return false;
+    }
+    return true;
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    if (!checkFormActive()) return;
     initLombaSelection();
     form.addEventListener('submit', handleFormSubmit);
     if (persetujuanCheckbox) persetujuanCheckbox.addEventListener('change', ()=> { if (submitBtn) submitBtn.disabled = !persetujuanCheckbox.checked; });
